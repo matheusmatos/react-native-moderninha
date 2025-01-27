@@ -1,29 +1,18 @@
-import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import {
-  Constants,
-  getIsAuthenticated,
-  getUserData,
-  type PlugPagUserDataResult,
-  hasCapability,
-  TerminalCapabilities,
-} from 'react-native-moderninha';
+// import {
+//   Constants,
+//   getIsAuthenticated,
+//   getUserData,
+//   type PlugPagUserDataResult,
+//   hasCapability,
+//   TerminalCapabilities,
+// } from 'react-native-moderninha';
+import Moderninha from 'react-native-moderninha';
 
 export default function Home() {
-  const [userData, setUserData] = useState<PlugPagUserDataResult>();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
-
-  useEffect(() => {
-    getUserData().then(setUserData);
-    let val = getIsAuthenticated();
-    setIsAuthenticated(val);
-  }, []);
-
   return (
     <View style={styles.container}>
-      <Text>SERIAL_NUMBER: {Constants.TERMINAL_SERIAL_NUMBER}</Text>
-      <Text>isAuthenticated: {isAuthenticated?.toString()}</Text>
-      <Text>{JSON.stringify(userData, null, 2)}</Text>
+      <Text>isAuthenticated: {Moderninha.isAuthenticated()?.toString()}</Text>
     </View>
   );
 }
