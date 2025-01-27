@@ -5,11 +5,6 @@
     "source": "./src/index.tsx",
     "main": "./lib/commonjs/index.js",
     "module": "./lib/module/index.js",
-    "expo": {
-        "plugins": [
-            "./withReactNativeModerninha"
-        ]
-    },
     "exports": {
         ".": {
             "import": {
@@ -27,6 +22,7 @@
         "lib",
         "android",
         "cpp",
+        "app.plugin.js",
         "*.podspec",
         "!android/build",
         "!android/gradle",
@@ -38,6 +34,11 @@
         "!**/__mocks__",
         "!**/.*"
     ],
+    "expo": {
+        "plugins": [
+            "./app.plugin.js"
+        ]
+    },
     "scripts": {
         "example": "yarn workspace react-native-moderninha-example",
         "test": "jest",
