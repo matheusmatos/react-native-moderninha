@@ -1,7 +1,11 @@
-import type { IPlugPag } from '../types';
+import type { IPlugPag, PlugPagBeepData } from '../types';
 import Moderninha from '../native';
 
 export default class NativePlugPag implements IPlugPag {
+  beep(beepData: PlugPagBeepData): Promise<number> {
+    return Moderninha.beep(beepData);
+  }
+
   multiply(a: number, b: number): Promise<number> {
     return Moderninha.multiply(a, b);
   }

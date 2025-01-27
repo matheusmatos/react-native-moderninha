@@ -1,6 +1,11 @@
-import type { IPlugPag } from '../types';
+import type { IPlugPag, PlugPagBeepData } from '../types';
 
 export default class FallbackPlugPag implements IPlugPag {
+  beep(_beepData: PlugPagBeepData): Promise<number> {
+    console.warn('RNModerninha: beep is not available on this platform');
+    return Promise.resolve(0);
+  }
+
   multiply(a: number, b: number): Promise<number> {
     return Promise.resolve(a * b); // Simulate async behavior
   }

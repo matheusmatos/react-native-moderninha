@@ -13,11 +13,13 @@ import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPag
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagPrintResult
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagPrinterData
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagPrinterListener
+import br.com.uol.pagseguro.plugpagservice.wrapper.data.request.PlugPagBeepData
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.module.annotations.ReactModule
 import java.io.FileOutputStream
@@ -48,6 +50,30 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
     constants["TERMINAL_SERIAL_NUMBER"] = moderninhaUtils.getTerminalSerialNumber()
     constants["TERMINAL_SN"] = moderninhaUtils.getTerminalSN()
     return constants
+  }
+
+  @ReactMethod
+  fun beep(beepDataMap: ReadableMap, promise: Promise) {
+    try {
+      val frequency = when (beepDataMap.getInt("frequency")) {
+        0 -> PlugPagBeepData.FREQUENCE_LEVEL_0
+        1 -> PlugPagBeepData.FREQUENCE_LEVEL_1
+        2 -> PlugPagBeepData.FREQUENCE_LEVEL_2
+        3 -> PlugPagBeepData.FREQUENCE_LEVEL_3
+        4 -> PlugPagBeepData.FREQUENCE_LEVEL_4
+        5 -> PlugPagBeepData.FREQUENCE_LEVEL_5
+        6 -> PlugPagBeepData.FREQUENCE_LEVEL_6
+        else -> throw IllegalArgumentException("Invalid frequency level")
+      }
+
+      val result = plugPag.beep(PlugPagBeepData(
+        frequency = frequency,
+        duration = beepDataMap.getInt("duration")
+      ))
+      promise.resolve(result)
+    } catch (e: Exception) {
+      promise.reject("ERROR", e.message, e)
+    }
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
