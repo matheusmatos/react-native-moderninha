@@ -1,0 +1,19 @@
+{
+  "name": "ModerninhaExample",
+  "displayName": "ModerninhaExample",
+  "components": [
+    {
+      "appKey": "ModerninhaExample",
+      "displayName": "ModerninhaExample"
+    }
+  ],
+  "resources": {
+    "android": [
+      "dist/res",
+      "dist/main.android.jsbundle"
+    ]
+  },
+  "android": {
+    "package": "com.matheusmatos.moderninhaexample"
+  }
+}
