@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import type { IPlugPag } from '../types';
 
 export default class FallbackPlugPag implements IPlugPag {
@@ -12,15 +10,15 @@ export default class FallbackPlugPag implements IPlugPag {
     return false;
   }
 
-  hasCapability(capability: number): boolean {
+  hasCapability(_capability: number): boolean {
     console.warn('hasCapability is not available on this platform');
     return false;
   }
 
   printFromFile(
-    filePath: string,
-    printerQuality: number = 4,
-    steps: number = 120
+    _filePath: string,
+    _printerQuality: number = 4,
+    _steps: number = 120
   ): Promise<boolean> {
     console.warn('printFromFile is not available on this platform');
     return Promise.resolve(false);
