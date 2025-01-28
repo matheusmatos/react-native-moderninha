@@ -19,6 +19,10 @@ export type PlugPagBeepData = {
   duration: number;
 };
 
+export type PrintLine = {
+    
+}
+
 export interface IPlugPag {
   /**
    * Executa um alerta sonoro.
@@ -28,11 +32,37 @@ export interface IPlugPag {
   multiply(a: number, b: number): Promise<number>;
   isAuthenticated(): boolean;
   hasCapability(capability: number): boolean;
+
+  /**
+   * Executa uma solicitação de impressão através do caminho de um texto fornecido.
+   * @param text Texto a ser renderizado e impresso.
+   * @param printerQuality Qualidade da impressão.
+   * @param steps Quantidade de linhas impressas após a impressão finalizar, tendo como valor mínimo PlugPag.MIN_PRINTER_STEPS.
+   */
+  printFromLines(
+    printLines: string,
+    printerQuality?: number,
+    steps?: number
+  ): Promise<boolean>;
+
+  /**
+   * Executa uma solicitação de impressão através do caminho de um texto fornecido.
+   * @param text Texto a ser renderizado e impresso.
+   * @param printerQuality Qualidade da impressão.
+   * @param steps Quantidade de linhas impressas após a impressão finalizar, tendo como valor mínimo PlugPag.MIN_PRINTER_STEPS.
+   */
   printFromText(
     text: string,
     printerQuality?: number,
     steps?: number
   ): Promise<boolean>;
+
+  /**
+   * Executa uma solicitação de impressão através do caminho de um arquivo local.
+   * @param filePath Caminho do arquivo a ser impresso.
+   * @param printerQuality Qualidade da impressão.
+   * @param steps Quantidade de linhas impressas após a impressão finalizar, tendo como valor mínimo PlugPag.MIN_PRINTER_STEPS.
+   */
   printFromFile(
     filePath: string,
     printerQuality?: number,

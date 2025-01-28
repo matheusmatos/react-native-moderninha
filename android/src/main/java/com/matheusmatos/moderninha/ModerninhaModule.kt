@@ -2,17 +2,8 @@ package com.matheusmatos.moderninha
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.os.Environment
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.TextView
 import androidx.core.content.ContextCompat
-import br.com.uol.pagseguro.plugpagservice.wrapper.AppIdentification
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPag
-import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagPrintResult
-import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagPrinterData
-import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagPrinterListener
 import br.com.uol.pagseguro.plugpagservice.wrapper.data.request.PlugPagBeepData
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
@@ -20,11 +11,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
-import com.facebook.react.bridge.WritableMap
 import com.facebook.react.module.annotations.ReactModule
-import java.io.FileOutputStream
-import java.io.IOException
-
 
 @ReactModule(name = ModerninhaModule.TAG)
 @Suppress("unused")
@@ -38,18 +25,17 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
   }
 
   private val plugPag: PlugPag = PlugPag(reactContext)
-  private val appIdentification: AppIdentification = AppIdentification(reactContext)
+  private val moderninhaPrinter: ModerninhaPrinter = ModerninhaPrinter(plugPag)
 
   override fun getName(): String = TAG
 
-  private val moderninhaUtils: ModerninhaUtils = ModerninhaUtils()
-
   override fun getConstants(): MutableMap<String, Any> {
-    val constants: MutableMap<String, Any> = HashMap()
-    constants["TERMINAL_CAPABILITIES"] = moderninhaUtils.getTerminalCapabilities()
-    constants["TERMINAL_SERIAL_NUMBER"] = moderninhaUtils.getTerminalSerialNumber()
-    constants["TERMINAL_SN"] = moderninhaUtils.getTerminalSN()
-    return constants
+    val moderninhaUtils = ModerninhaUtils()
+    return mutableMapOf(
+      "TERMINAL_CAPABILITIES" to moderninhaUtils.getTerminalCapabilities(),
+      "TERMINAL_SERIAL_NUMBER" to moderninhaUtils.getTerminalSerialNumber(),
+      "TERMINAL_SN" to moderninhaUtils.getTerminalSN()
+    )
   }
 
   @ReactMethod
@@ -66,10 +52,12 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
         else -> throw IllegalArgumentException("Invalid frequency level")
       }
 
-      val result = plugPag.beep(PlugPagBeepData(
-        frequency = frequency,
-        duration = beepDataMap.getInt("duration")
-      ))
+      val result = plugPag.beep(
+        PlugPagBeepData(
+          frequency = frequency,
+          duration = beepDataMap.getInt("duration")
+        )
+      )
       promise.resolve(result)
     } catch (e: Exception) {
       promise.reject("ERROR", e.message, e)
@@ -88,92 +76,56 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
 
   @ReactMethod
   fun getUserData(promise: Promise) {
-    val userData = plugPag.getUserData()
-    val map: WritableMap = Arguments.createMap()
-
-    map.putString("address", userData.address.orNullIfEmpty())
-    map.putString("city", userData.city.orNullIfEmpty())
-    map.putString("cnpjCpf", userData.cnpjCpf.orNullIfEmpty())
-    map.putString("addressComplement", userData.addressComplement.orNullIfEmpty())
-    map.putString("companyName", userData.companyName.orNullIfEmpty())
-    map.putString("userNickName", userData.userNickName.orNullIfEmpty())
-    map.putString("addressState", userData.addressState.orNullIfEmpty())
-    map.putString("email", userData.email.orNullIfEmpty())
-
-    promise.resolve(map)
+    try {
+      val userData = plugPag.getUserData()
+      val map = Arguments.createMap().apply {
+        putString("address", userData.address.orNullIfEmpty())
+        putString("city", userData.city.orNullIfEmpty())
+        putString("cnpjCpf", userData.cnpjCpf.orNullIfEmpty())
+        putString("addressComplement", userData.addressComplement.orNullIfEmpty())
+        putString("companyName", userData.companyName.orNullIfEmpty())
+        putString("userNickName", userData.userNickName.orNullIfEmpty())
+        putString("addressState", userData.addressState.orNullIfEmpty())
+        putString("email", userData.email.orNullIfEmpty())
+      }
+      promise.resolve(map)
+    } catch (e: Exception) {
+      promise.reject("ERROR", e.message, e)
+    }
   }
 
   @ReactMethod
   fun printFromText(text: String, printerQuality: Int, steps: Int, promise: Promise) {
-    val permissionStatus = ContextCompat.checkSelfPermission(reactApplicationContext, Manifest.permission.READ_EXTERNAL_STORAGE)
-
-    if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
-      promise.reject("PERMISSION_DENIED", "Read external storage permission is required to print from file.")
+    if (!hasReadPermission()) {
+      promise.reject("PERMISSION_DENIED", "Read external storage permission is required to print.")
       return
     }
-
-    try {
-      // Step 1: Create a bitmap from the provided text
-      val bitmap = moderninhaUtils.createBitmapFromText(text)
-
-      // Step 2: Save the bitmap as a temporary image file
-      val tempFile = moderninhaUtils.saveBitmapToTempFile(reactApplicationContext, bitmap)
-
-      // Step 3: Prepare printer data
-      val printerData = PlugPagPrinterData(tempFile.absolutePath, printerQuality, steps)
-
-      // Step 4: Create a printer listener
-      val listener: PlugPagPrinterListener = object : PlugPagPrinterListener {
-        override fun onSuccess(result: PlugPagPrintResult) {
-          val map = Arguments.createMap().apply {
-            putString("message", result.message)
-            putString("code", result.errorCode)
-          }
-          promise.resolve(map)
-          tempFile.delete() // Clean up
-        }
-
-        override fun onError(result: PlugPagPrintResult) {
-          promise.reject("PRINT_ERROR", result.message ?: "Unknown error", Throwable(result.errorCode))
-          tempFile.delete() // Clean up
-        }
-      }
-
-      // Step 5: Set listener and print
-      plugPag.setPrinterListener(listener)
-      plugPag.printFromFile(printerData)
-    } catch (e: IOException) {
-      promise.reject("FILE_ERROR", "Failed to create or write to temporary file: ${e.message}", e)
-    } catch (e: Exception) {
-      promise.reject("PRINT_ERROR", e.message, e)
-    }
+    moderninhaPrinter.printFromText(reactApplicationContext, text, printerQuality, steps, promise)
   }
 
   @ReactMethod
   fun printFromFile(filePath: String, printerQuality: Int, steps: Int, promise: Promise) {
-    val permissionStatus = ContextCompat.checkSelfPermission(reactApplicationContext, Manifest.permission.READ_EXTERNAL_STORAGE)
-
-    if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
-      promise.reject("PERMISSION_DENIED", "Read external storage permission is required to print from file.")
+    if (!hasReadPermission()) {
+      promise.reject("PERMISSION_DENIED", "Read external storage permission is required to print.")
       return
     }
+    moderninhaPrinter.printFromFile(reactApplicationContext, filePath, printerQuality, steps, promise)
+  }
 
-    val data = PlugPagPrinterData(filePath, printerQuality, steps)
-    val listener: PlugPagPrinterListener = object : PlugPagPrinterListener {
-      override fun onSuccess(result: PlugPagPrintResult) {
-        val map = Arguments.createMap().apply {
-          putString("message", result.message)
-          putString("code", result.errorCode)
-        }
-        promise.resolve(map)
-      }
-
-      override fun onError(result: PlugPagPrintResult) {
-        promise.reject("PRINT_ERROR", result.message ?: "Unknown error", Throwable(result.errorCode))
-      }
+  @ReactMethod
+  fun printFromLines(lines: List<Map<String, String>>, printerQuality: Int, steps: Int, promise: Promise) {
+    if (!hasReadPermission()) {
+      promise.reject("PERMISSION_DENIED", "Read external storage permission is required to print.")
+      return
     }
+    moderninhaPrinter.printFromLines(reactApplicationContext, lines, printerQuality, steps, promise)
+  }
 
-    plugPag.setPrinterListener(listener)
-    plugPag.printFromFile(data)
+  private fun hasReadPermission(): Boolean {
+    val permissionStatus = ContextCompat.checkSelfPermission(
+      reactApplicationContext,
+      Manifest.permission.READ_EXTERNAL_STORAGE
+    )
+    return permissionStatus == PackageManager.PERMISSION_GRANTED
   }
 }
