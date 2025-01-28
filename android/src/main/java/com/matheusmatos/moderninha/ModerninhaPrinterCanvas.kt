@@ -17,7 +17,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
   // Directly calculate 1mm in pixels
   private val pxPerMm: Float = width.toFloat() / paperSize.toFloat()
   private val mm = pxPerMm.toInt() // 20
-  private val pt = (mm / 3.8).toFloat() // 20 / 3.8 = 5.26
+  private val pt = (mm / 3.2).toFloat() // 20 / 3.2 = 6.25
 
   private val paintFillBlack = Paint(Paint.ANTI_ALIAS_FLAG).apply {
     style = Paint.Style.FILL
@@ -83,7 +83,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
     var totalHeight = 0
     lines.forEach { line ->
       totalHeight += when (line["tag"]?.uppercase()) {
-        "HR" -> 3 * mm
+        "HR" -> 1 * mm
         "QRCODE" -> 6 * mm
         "BARCODE" -> 6 * mm
         "IMG" -> line["content"]?.let { decodeBase64Image(it)?.height } ?: 0
@@ -214,7 +214,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
   }
 
   private fun drawSeparator() {
-    val lineHeight = 5 * mm // Height of the separator in pixels
+    val lineHeight = 1 * mm // Height of the separator in pixels
     val top = incrementY(lineHeight) // Current Y-coordinate
     val rect = Rect(0, top, width, top + lineHeight) // Define the rectangle for the separator
     canvas?.drawRect(rect, paintFillBlack) // Draw the separator
