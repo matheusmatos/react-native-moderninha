@@ -3,6 +3,7 @@ export interface PlugPagException extends Error {
   cause?: Error;
   errorCode: string;
 }
+
 export enum BeepDataConstants {
   MIN_FREQUENCY = 0,
   MAX_FREQUENCY = 6,
@@ -19,37 +20,77 @@ export type PlugPagBeepData = {
   duration: number;
 };
 
+/**
+ * Represents a line to be printed.
+ * Each line has a tag and content that determine how it will be rendered.
+ */
 export type PrintLine = {
-    
-}
+  /**
+   * Tag to be printed.
+   */
+  tag:
+    | 'BARCODE'
+    | 'CODE'
+    | 'H1'
+    | 'H2'
+    | 'HR'
+    | 'IMG'
+    | 'QRCODE'
+    | 'SMALL'
+    | 'STRONG'
+    | 'SUBTITLE'
+    | 'TIME'
+    | 'TITLE'
+    | 'VERSUS';
+
+  /**
+   * Content to be printed, e.g., text, Base64 image, or QR code data
+   */
+  content: string;
+};
 
 export interface IPlugPag {
   /**
-   * Executa um alerta sonoro.
+   * Executes a beep sound.
    * @param beepData PlugPagBeepData({ frequency: BeepDataConstants, duration: number })
    */
   beep(beepData: PlugPagBeepData): Promise<number>;
+
+  /**
+   * Multiplies two numbers (example method).
+   * @param a First number.
+   * @param b Second number.
+   */
   multiply(a: number, b: number): Promise<number>;
+
+  /**
+   * Checks if the device is authenticated.
+   */
   isAuthenticated(): boolean;
+
+  /**
+   * Checks if the device has a specific capability.
+   * @param capability Capability code.
+   */
   hasCapability(capability: number): boolean;
 
   /**
-   * Executa uma solicitação de impressão através do caminho de um texto fornecido.
-   * @param text Texto a ser renderizado e impresso.
-   * @param printerQuality Qualidade da impressão.
-   * @param steps Quantidade de linhas impressas após a impressão finalizar, tendo como valor mínimo PlugPag.MIN_PRINTER_STEPS.
+   * Prints a series of lines with different styles (tags) and content.
+   * @param printLines Array of PrintLine objects specifying the lines to print.
+   * @param printerQuality Quality of the printout.
+   * @param steps Number of lines printed after the main content (minimum: PlugPag.MIN_PRINTER_STEPS).
    */
   printFromLines(
-    printLines: string,
+    printLines: PrintLine[],
     printerQuality?: number,
     steps?: number
   ): Promise<boolean>;
 
   /**
-   * Executa uma solicitação de impressão através do caminho de um texto fornecido.
-   * @param text Texto a ser renderizado e impresso.
-   * @param printerQuality Qualidade da impressão.
-   * @param steps Quantidade de linhas impressas após a impressão finalizar, tendo como valor mínimo PlugPag.MIN_PRINTER_STEPS.
+   * Prints text by converting it to a bitmap.
+   * @param text Text to be rendered and printed.
+   * @param printerQuality Quality of the printout.
+   * @param steps Number of lines printed after the main content (minimum: PlugPag.MIN_PRINTER_STEPS).
    */
   printFromText(
     text: string,
@@ -58,10 +99,10 @@ export interface IPlugPag {
   ): Promise<boolean>;
 
   /**
-   * Executa uma solicitação de impressão através do caminho de um arquivo local.
-   * @param filePath Caminho do arquivo a ser impresso.
-   * @param printerQuality Qualidade da impressão.
-   * @param steps Quantidade de linhas impressas após a impressão finalizar, tendo como valor mínimo PlugPag.MIN_PRINTER_STEPS.
+   * Prints a file from a specified local path.
+   * @param filePath Path to the file to be printed.
+   * @param printerQuality Quality of the printout.
+   * @param steps Number of lines printed after the main content (minimum: PlugPag.MIN_PRINTER_STEPS).
    */
   printFromFile(
     filePath: string,

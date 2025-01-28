@@ -1,4 +1,4 @@
-import type { IPlugPag, PlugPagBeepData } from '../types';
+import type { IPlugPag, PlugPagBeepData, PrintLine } from '../types';
 import Moderninha from '../Moderninha';
 
 export default class NativePlugPag implements IPlugPag {
@@ -24,6 +24,14 @@ export default class NativePlugPag implements IPlugPag {
     steps?: number
   ): Promise<boolean> {
     return Moderninha.printFromText(text, printerQuality, steps);
+  }
+
+  printFromLines(
+    printLines: PrintLine[],
+    printerQuality?: number,
+    steps?: number
+  ): Promise<boolean> {
+    return Moderninha.printFromLines(printLines, printerQuality, steps);
   }
 
   printFromFile(

@@ -1,4 +1,4 @@
-import type { IPlugPag, PlugPagBeepData } from '../types';
+import type { IPlugPag, PlugPagBeepData, PrintLine } from '../types';
 
 export default class FallbackPlugPag implements IPlugPag {
   beep(_beepData: PlugPagBeepData): Promise<number> {
@@ -26,6 +26,15 @@ export default class FallbackPlugPag implements IPlugPag {
     _steps?: number
   ): Promise<boolean> {
     console.warn('printFromText is not available on this platform');
+    return Promise.resolve(false);
+  }
+
+  printFromLines(
+    _printLines: PrintLine[],
+    _printerQuality?: number,
+    _steps?: number
+  ): Promise<boolean> {
+    console.warn('printFromLines is not available on this platform');
     return Promise.resolve(false);
   }
 
