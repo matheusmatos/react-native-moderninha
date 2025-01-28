@@ -20,6 +20,15 @@ export default class FallbackPlugPag implements IPlugPag {
     return false;
   }
 
+  printFromText(
+    _text: string,
+    _printerQuality?: number,
+    _steps?: number
+  ): Promise<boolean> {
+    console.warn('printFromText is not available on this platform');
+    return Promise.resolve(false);
+  }
+
   printFromFile(
     _filePath: string,
     _printerQuality: number = 4,

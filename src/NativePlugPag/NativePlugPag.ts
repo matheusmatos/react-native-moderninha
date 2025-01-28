@@ -18,6 +18,14 @@ export default class NativePlugPag implements IPlugPag {
     return Moderninha.hasCapability(capability);
   }
 
+  printFromText(
+    text: string,
+    printerQuality?: number,
+    steps?: number
+  ): Promise<boolean> {
+    return Moderninha.printFromText(text, printerQuality, steps);
+  }
+
   printFromFile(
     filePath: string,
     printerQuality: number = 4,

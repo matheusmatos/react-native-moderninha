@@ -28,6 +28,11 @@ export interface IPlugPag {
   multiply(a: number, b: number): Promise<number>;
   isAuthenticated(): boolean;
   hasCapability(capability: number): boolean;
+  printFromText(
+    text: string,
+    printerQuality?: number,
+    steps?: number
+  ): Promise<boolean>;
   printFromFile(
     filePath: string,
     printerQuality?: number,

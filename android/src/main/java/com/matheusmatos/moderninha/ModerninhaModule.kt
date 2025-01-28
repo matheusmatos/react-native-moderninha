@@ -104,6 +104,45 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
   }
 
   @ReactMethod
+  fun printFromText(text: String, printerQuality: Int, steps: Int, promise: Promise) {
+    try {
+      // Step 1: Create a temporary file
+      val tempFile = createTempFile("print", ".txt", reactApplicationContext.cacheDir)
+
+      // Step 2: Write the text to the temporary file
+      tempFile.writeText(text)
+
+      // Step 3: Prepare printer data
+      val printerData = PlugPagPrinterData(tempFile.absolutePath, printerQuality, steps)
+
+      // Step 4: Create a printer listener
+      val listener: PlugPagPrinterListener = object : PlugPagPrinterListener {
+        override fun onSuccess(result: PlugPagPrintResult) {
+          val map = Arguments.createMap().apply {
+            putString("message", result.message)
+            putString("code", result.errorCode)
+          }
+          promise.resolve(map)
+          tempFile.delete() // Clean up
+        }
+
+        override fun onError(result: PlugPagPrintResult) {
+          promise.reject("PRINT_ERROR", result.message ?: "Unknown error", Throwable(result.errorCode))
+          tempFile.delete() // Clean up
+        }
+      }
+
+      // Step 5: Set listener and print
+      plugPag.setPrinterListener(listener)
+      plugPag.printFromFile(printerData)
+    } catch (e: IOException) {
+      promise.reject("FILE_ERROR", "Failed to create or write to temporary file: ${e.message}", e)
+    } catch (e: Exception) {
+      promise.reject("PRINT_ERROR", e.message, e)
+    }
+  }
+
+  @ReactMethod
   fun printFromFile(filePath: String, printerQuality: Int, steps: Int, promise: Promise) {
     val permissionStatus = ContextCompat.checkSelfPermission(reactApplicationContext, Manifest.permission.READ_EXTERNAL_STORAGE)
 
