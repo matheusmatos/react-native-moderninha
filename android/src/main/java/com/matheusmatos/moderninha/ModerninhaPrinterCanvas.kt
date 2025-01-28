@@ -17,7 +17,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
   // Directly calculate 1mm in pixels
   private val pxPerMm: Float = width.toFloat() / paperSize.toFloat()
   private val mm = pxPerMm.toInt()
-  private val pt = (mm / 3.2).toFloat() // Slightly larger for better readability
+  private val pt = (mm / 3.4).toFloat() // Slightly larger for better readability
 
   private val paintFillBlack = Paint(Paint.ANTI_ALIAS_FLAG).apply {
     style = Paint.Style.FILL
@@ -118,7 +118,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
     val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
       textSize = getFontSize(tag)
     }
-    return (paint.descent() - paint.ascent()).toInt() + 2 * mm // Add vertical padding
+    return (paint.descent() - paint.ascent()).toInt() + 1 * mm // Add vertical padding
   }
 
   private fun getSeparatorHeight(): Int {
@@ -169,7 +169,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
       paint.textSize = adjustedTextSize
     }
 
-    canvas?.drawText(text, centerX.toFloat(), incrementY((adjustedTextSize * 1).toInt()).toFloat(), paint)
+    canvas?.drawText(text, centerX.toFloat(), incrementY((adjustedTextSize * 1.2).toInt()).toFloat(), paint)
   }
 
   private fun drawQRCode(content: String) {
