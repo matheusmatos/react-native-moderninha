@@ -57,7 +57,7 @@ class ModerninhaPrinter(private val plugPag: PlugPag) {
     try {
       // Step 1: Create the bitmap using ModerninhaPrinterCanvas
       val scale = context.resources.displayMetrics.density
-      val printerCanvas = ModerninhaPrinterCanvas(384, scale) // Width is typically 384px for thermal printers
+      val printerCanvas = ModerninhaPrinterCanvas(960, 48) // Width is typically 384px for thermal printers
       val bitmap = printerCanvas.createBitmapFromText(text)
 
       // Step 2: Save the bitmap to a file
@@ -84,7 +84,7 @@ class ModerninhaPrinter(private val plugPag: PlugPag) {
 
         // Step 2: Create the bitmap using ModerninhaPrinterCanvas
         val scale = context.resources.displayMetrics.density
-        val printerCanvas = ModerninhaPrinterCanvas(384, scale) // Width is typically 384px for thermal printers
+        val printerCanvas = ModerninhaPrinterCanvas(960, 48)
         val bitmap = printerCanvas.createBitmapFromLines(convertedLines)
 
         // Step 3: Save the bitmap to a file

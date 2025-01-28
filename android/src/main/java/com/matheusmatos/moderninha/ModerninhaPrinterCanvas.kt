@@ -6,16 +6,18 @@ import android.util.Log
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 
-class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) {
+class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSize: Int = 48) {
   companion object {
     const val TAG = "ModerninhaPrinterCanvas"
   }
 
   private var canvas: Canvas? = null
   private var cY = 0
-  private val px = (1 * scale).toInt(); // Pixels per millimeter based on DPI
-  private val mm = (1 * px).toInt()
-  private val pt = (px / 3).toInt()
+
+  // Directly calculate 1mm in pixels
+  private val pxPerMm: Float = width.toFloat() / paperSize.toFloat()
+  private val mm = pxPerMm.toInt()
+  private val pt = (mm / 3).toInt()
 
   private val paintFillBlack = Paint(Paint.ANTI_ALIAS_FLAG).apply {
     style = Paint.Style.FILL
@@ -62,7 +64,7 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) 
     // Step 4: Draw each line of wrapped text
     var y = -textPaint.ascent() // Start drawing from the first line
     lines.forEach { line ->
-      canvas.drawText(line, 10 * px.toFloat(), y, textPaint) // Add left margin
+      canvas.drawText(line, 10 * pt.toFloat(), y, textPaint) // Add left margin
       y += textHeight
     }
 
@@ -140,7 +142,7 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) 
       this.color = Color.BLACK
     }
 
-    val maxWidth = width - (2 * 10 * px) // Leave margins on both sides
+    val maxWidth = width - (2 * 10 * pt) // Leave margins on both sides
 
     // Scale down font size if text exceeds max width
     var adjustedTextSize = textSize
