@@ -1,4 +1,4 @@
-import Moderninha from './native';
+import Moderninha from './Moderninha';
 
 let RNConstants = Moderninha.getConstants();
 

@@ -56,7 +56,7 @@ static def supportsNamespace() {
 
 android {
   if (supportsNamespace()) {
-    namespace "com.matheusmatos.moderninhaexample"
+    namespace "com.matheusmatos.moderninha"
 
     sourceSets {
       main {

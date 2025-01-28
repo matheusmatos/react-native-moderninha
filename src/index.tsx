@@ -1,10 +1,12 @@
-import native from './native';
+import Moderninha from './Moderninha';
 import type { IPlugPag } from './types/IPlugPag';
-import FallbackPlugPag from './fallback/FallbackPlugPag';
-import NativePlugPag from './module/NativePlugPag';
+import FallbackPlugPag from './FallbackPlugPag/FallbackPlugPag';
+import NativePlugPag from './NativePlugPag/NativePlugPag';
 
 export * from './types';
 
-const PlugPag: IPlugPag = native ? new NativePlugPag() : new FallbackPlugPag();
+const PlugPag: IPlugPag = Moderninha
+  ? new NativePlugPag()
+  : new FallbackPlugPag();
 
 export default PlugPag;
