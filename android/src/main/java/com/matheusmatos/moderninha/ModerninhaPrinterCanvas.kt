@@ -9,6 +9,7 @@ import com.google.zxing.MultiFormatWriter
 class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) {
   companion object {
     const val TAG = "ModerninhaPrinterCanvas"
+    const val width = 384;
   }
 
   private var canvas: Canvas? = null
@@ -27,37 +28,43 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) 
   private val centerX get() = canvas?.width?.div(2) ?: 0
 
   private val fontSizes = mapOf(
-    "TITLE" to 18 * pt,
-    "H1" to 16 * pt,
-    "H2" to 14 * pt,
-    "SUBTITLE" to 13 * pt,
-    "SMALL" to 11 * pt
+    "TITLE" to 28f,      // Larger for titles
+    "H1" to 28f,         // Main headings
+    "H2" to 26f,         // Subheadings
+    "SUBTITLE" to 26f,   // Secondary headings
+    "SMALL" to 24f       // Default size for small text
   )
 
-  private fun getFontSize(tag: String): Int {
-    return fontSizes[tag.uppercase()] ?: (13 * pt)
+  private fun getFontSize(tag: String): Float {
+    return fontSizes[tag.uppercase()] ?: 24f // Default to SMALL size if no match
   }
 
   fun createBitmapFromText(text: String): Bitmap {
     // Step 1: Define bitmap dimensions and properties
-    val width = 384 // Typical width for thermal printers
-    val textPaint = android.graphics.Paint().apply {
-      color = android.graphics.Color.BLACK
-      textSize = 24f
+    val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+      color = Color.BLACK
+      textSize = 24f // Default text size
       isAntiAlias = true
+      typeface = Typeface.create("Roboto", Typeface.NORMAL)
     }
     val textHeight = textPaint.descent() - textPaint.ascent()
-    val height = (textHeight * text.split("\n").size).toInt()
+    val maxWidth = width - (2 * 10 * px) // Leave margins on both sides
 
-    // Step 2: Create the bitmap
+    // Step 2: Wrap the text into multiple lines
+    val lines = wrapText(text, textPaint, maxWidth)
+
+    // Calculate the height of the bitmap based on the number of lines
+    val height = (textHeight * lines.size).toInt() + (4 * mm)
+
+    // Step 3: Create the bitmap
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-    val canvas = android.graphics.Canvas(bitmap)
-    canvas.drawColor(android.graphics.Color.WHITE) // Set background color
+    val canvas = Canvas(bitmap)
+    canvas.drawColor(Color.WHITE) // Set background color
 
-    // Step 3: Draw the text
-    var y = -textPaint.ascent()
-    text.split("\n").forEach { line ->
-      canvas.drawText(line, 0f, y, textPaint)
+    // Step 4: Draw each line of wrapped text
+    var y = -textPaint.ascent() // Start drawing from the first line
+    lines.forEach { line ->
+      canvas.drawText(line, 10 * px.toFloat(), y, textPaint) // Add left margin
       y += textHeight
     }
 
@@ -87,24 +94,6 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) 
     return totalHeight
   }
 
-  private fun drawContent(lines: List<Map<String, String>>) {
-    lines.forEach { line ->
-      val tag = line["tag"] ?: return@forEach
-      val content = line["content"] ?: ""
-      when (tag.uppercase()) {
-        "TITLE", "H1" -> drawText(content, getFontSize("TITLE"), Paint.Align.CENTER, Typeface.BOLD)
-        "SUBTITLE", "H2" -> drawText(content, getFontSize("SUBTITLE"), Paint.Align.CENTER, Typeface.BOLD)
-        "STRONG" -> drawText(content, getFontSize("H2"), Paint.Align.CENTER, Typeface.BOLD)
-        "SMALL" -> drawText(content, getFontSize("SMALL"), Paint.Align.CENTER, Typeface.NORMAL)
-        "QRCODE" -> drawQRCode(content, 15 * mm)
-        "BARCODE" -> drawBarcode(content)
-        "IMG" -> drawImage(content)
-        "HR" -> drawSeparator()
-        else -> drawText(content, getFontSize("SMALL"), Paint.Align.CENTER, Typeface.NORMAL)
-      }
-    }
-  }
-
   private fun wrapText(text: String, paint: Paint, maxWidth: Int): List<String> {
     val words = text.split(" ")
     val lines = mutableListOf<String>()
@@ -127,9 +116,27 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) 
     return lines
   }
 
-  private fun drawText(text: String, textSize: Int, align: Paint.Align, style: Int) {
+  private fun drawContent(lines: List<Map<String, String>>) {
+    lines.forEach { line ->
+      val tag = line["tag"] ?: return@forEach
+      val content = line["content"] ?: ""
+      when (tag.uppercase()) {
+        "TITLE", "H1" -> drawText(content, getFontSize("TITLE"), Paint.Align.CENTER, Typeface.BOLD)
+        "SUBTITLE", "H2" -> drawText(content, getFontSize("SUBTITLE"), Paint.Align.CENTER, Typeface.BOLD)
+        "STRONG" -> drawText(content, getFontSize("H2"), Paint.Align.CENTER, Typeface.BOLD)
+        "SMALL" -> drawText(content, getFontSize("SMALL"), Paint.Align.CENTER, Typeface.NORMAL)
+        "QRCODE" -> drawQRCode(content, 15 * mm)
+        "BARCODE" -> drawBarcode(content)
+        "IMG" -> drawImage(content)
+        "HR" -> drawSeparator()
+        else -> drawText(content, getFontSize("SMALL"), Paint.Align.CENTER, Typeface.NORMAL)
+      }
+    }
+  }
+
+  private fun drawText(text: String, textSize: Float, align: Paint.Align, style: Int) {
     val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-      this.textSize = textSize.toFloat()
+      this.textSize = textSize
       this.textAlign = align
       this.typeface = Typeface.create("Roboto", style)
       this.color = Color.BLACK
@@ -137,15 +144,15 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) 
 
     val maxWidth = width - (2 * 10 * px) // Leave margins on both sides
 
-    // Dynamically shrink font size if text exceeds max width
-    var adjustedTextSize = textSize.toFloat()
-    while (paint.measureText(text) > maxWidth && adjustedTextSize > 8 * pt) { // Prevent text size from being too small
-      adjustedTextSize -= 1
+    // Scale down font size if text exceeds max width
+    var adjustedTextSize = textSize
+    while (paint.measureText(text) > maxWidth && adjustedTextSize > 8f) { // Prevent text size from being too small
+      adjustedTextSize -= 1f
       paint.textSize = adjustedTextSize
     }
 
     // Draw the text on the canvas
-    canvas?.drawText(text, centerX.toFloat(), incrementY(4 * mm).toFloat(), paint)
+    canvas?.drawText(text, centerX.toFloat(), incrementY((adjustedTextSize * 1.2).toInt()).toFloat(), paint)
   }
 
   private fun drawQRCode(content: String, maxSize: Int) {
