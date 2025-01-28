@@ -26,6 +26,18 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) 
 
   private val centerX get() = canvas?.width?.div(2) ?: 0
 
+  private val fontSizes = mapOf(
+    "TITLE" to 18 * pt,
+    "H1" to 16 * pt,
+    "H2" to 14 * pt,
+    "SUBTITLE" to 13 * pt,
+    "SMALL" to 11 * pt
+  )
+
+  private fun getFontSize(tag: String): Int {
+    return fontSizes[tag.uppercase()] ?: (13 * pt)
+  }
+
   fun createBitmapFromText(text: String): Bitmap {
     // Step 1: Define bitmap dimensions and properties
     val width = 384 // Typical width for thermal printers
@@ -80,17 +92,39 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) 
       val tag = line["tag"] ?: return@forEach
       val content = line["content"] ?: ""
       when (tag.uppercase()) {
-        "TITLE", "H1" -> drawText(content, 16 * pt, Paint.Align.CENTER, Typeface.BOLD)
-        "SUBTITLE", "H2" -> drawText(content, 13 * pt, Paint.Align.CENTER, Typeface.BOLD)
-        "STRONG" -> drawText(content, 13 * pt, Paint.Align.CENTER, Typeface.BOLD)
-        "SMALL" -> drawText(content, 11 * pt, Paint.Align.CENTER, Typeface.NORMAL)
+        "TITLE", "H1" -> drawText(content, getFontSize("TITLE"), Paint.Align.CENTER, Typeface.BOLD)
+        "SUBTITLE", "H2" -> drawText(content, getFontSize("SUBTITLE"), Paint.Align.CENTER, Typeface.BOLD)
+        "STRONG" -> drawText(content, getFontSize("H2"), Paint.Align.CENTER, Typeface.BOLD)
+        "SMALL" -> drawText(content, getFontSize("SMALL"), Paint.Align.CENTER, Typeface.NORMAL)
         "QRCODE" -> drawQRCode(content, 15 * mm)
         "BARCODE" -> drawBarcode(content)
         "IMG" -> drawImage(content)
         "HR" -> drawSeparator()
-        else -> drawText(content, 13 * pt, Paint.Align.CENTER, Typeface.NORMAL)
+        else -> drawText(content, getFontSize("SMALL"), Paint.Align.CENTER, Typeface.NORMAL)
       }
     }
+  }
+
+  private fun wrapText(text: String, paint: Paint, maxWidth: Int): List<String> {
+    val words = text.split(" ")
+    val lines = mutableListOf<String>()
+    var currentLine = ""
+
+    for (word in words) {
+      val testLine = if (currentLine.isEmpty()) word else "$currentLine $word"
+      if (paint.measureText(testLine) <= maxWidth) {
+        currentLine = testLine
+      } else {
+        lines.add(currentLine)
+        currentLine = word
+      }
+    }
+
+    if (currentLine.isNotEmpty()) {
+      lines.add(currentLine)
+    }
+
+    return lines
   }
 
   private fun drawText(text: String, textSize: Int, align: Paint.Align, style: Int) {
@@ -100,12 +134,24 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) 
       this.typeface = Typeface.create("Roboto", style)
       this.color = Color.BLACK
     }
+
+    val maxWidth = width - (2 * 10 * px) // Leave margins on both sides
+
+    // Dynamically shrink font size if text exceeds max width
+    var adjustedTextSize = textSize.toFloat()
+    while (paint.measureText(text) > maxWidth && adjustedTextSize > 8 * pt) { // Prevent text size from being too small
+      adjustedTextSize -= 1
+      paint.textSize = adjustedTextSize
+    }
+
+    // Draw the text on the canvas
     canvas?.drawText(text, centerX.toFloat(), incrementY(4 * mm).toFloat(), paint)
   }
 
-  private fun drawQRCode(content: String, size: Int) {
+  private fun drawQRCode(content: String, maxSize: Int) {
+    val size = (maxSize.coerceAtMost((width * 0.6).toInt())) // Limit QR code size to 60% of the paper width
     val bitmap = generateQRCode(content, size)
-    val left = (width - bitmap.width) / 2
+    val left = (width - bitmap.width) / 2 // Center the QR code
     canvas?.drawBitmap(bitmap, left.toFloat(), incrementY(4 * mm).toFloat(), null)
     incrementY(bitmap.height)
   }
@@ -138,9 +184,16 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) 
 
   private fun drawImage(base64Content: String) {
     val bitmap = decodeBase64Image(base64Content) ?: return
-    val left = (width - bitmap.width) / 2
-    canvas?.drawBitmap(bitmap, left.toFloat(), incrementY(4 * mm).toFloat(), null)
-    incrementY(bitmap.height)
+    val maxImageWidth = (width * 0.8).toInt() // Limit image width to 80% of the paper width
+    val scaledBitmap = Bitmap.createScaledBitmap(
+      bitmap,
+      maxImageWidth,
+      (bitmap.height * (maxImageWidth.toFloat() / bitmap.width)).toInt(),
+      true
+    )
+    val left = (width - scaledBitmap.width) / 2
+    canvas?.drawBitmap(scaledBitmap, left.toFloat(), incrementY(4 * mm).toFloat(), null)
+    incrementY(scaledBitmap.height)
   }
 
   private fun decodeBase64Image(base64Content: String): Bitmap? {
