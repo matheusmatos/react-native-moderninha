@@ -30,23 +30,21 @@ export type PrintLine = {
    */
   tag:
     | 'BARCODE'
-    | 'CODE'
     | 'H1'
     | 'H2'
-    | 'HR'
+    | 'STRONG'
+    | 'TEXT'
+    | 'SMALL'
+    | 'SEPARATOR'
     | 'IMG'
     | 'QRCODE'
-    | 'SMALL'
-    | 'STRONG'
-    | 'SUBTITLE'
     | 'TIME'
-    | 'TITLE'
     | 'VERSUS';
 
   /**
    * Content to be printed, e.g., text, Base64 image, or QR code data
    */
-  content: string;
+  content?: string;
 };
 
 export interface IPlugPag {

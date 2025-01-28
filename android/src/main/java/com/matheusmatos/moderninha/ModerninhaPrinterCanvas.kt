@@ -169,7 +169,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
       paint.textSize = adjustedTextSize
     }
 
-    canvas?.drawText(text, 0f, incrementY((adjustedTextSize * 1.5).toInt()).toFloat(), paint)
+    canvas?.drawText(text, centerX.toFloat(), incrementY((adjustedTextSize * 1.5).toInt()).toFloat(), paint)
   }
 
   private fun drawQRCode(content: String) {
