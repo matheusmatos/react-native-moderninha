@@ -106,7 +106,8 @@ class ModerninhaPrinter(private val plugPag: PlugPag) {
     promise: Promise,
     deleteFile: Boolean = false
   ) {
-    val data = PlugPagPrinterData(filePath, printerQuality, steps)
+    val sanitizedFilePath = filePath.removePrefix("file://")
+    val data = PlugPagPrinterData(sanitizedFilePath, printerQuality, steps)
     val listener: PlugPagPrinterListener = object : PlugPagPrinterListener {
       override fun onSuccess(result: PlugPagPrintResult) {
         val map = Arguments.createMap().apply {
