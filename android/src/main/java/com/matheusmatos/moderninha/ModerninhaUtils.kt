@@ -2,12 +2,15 @@ package com.matheusmatos.moderninha
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagExtras
 import br.com.uol.pagseguro.plugpagservice.wrapper.TerminalCapabilities
 import com.facebook.react.bridge.ReactApplicationContext
+import java.io.File
+import java.io.FileOutputStream
 
 
 class ModerninhaUtils() {
@@ -48,5 +51,39 @@ class ModerninhaUtils() {
 
   fun getTerminalSN(): String {
     return PlugPagExtras.TERMINAL_SN
+  }
+
+  fun createBitmapFromText(text: String): Bitmap {
+    // Step 1: Define bitmap dimensions and properties
+    val width = 384 // Typical width for thermal printers
+    val textPaint = android.graphics.Paint().apply {
+      color = android.graphics.Color.BLACK
+      textSize = 24f
+      isAntiAlias = true
+    }
+    val textHeight = textPaint.descent() - textPaint.ascent()
+    val height = (textHeight * text.split("\n").size).toInt()
+
+    // Step 2: Create the bitmap
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = android.graphics.Canvas(bitmap)
+    canvas.drawColor(android.graphics.Color.WHITE) // Set background color
+
+    // Step 3: Draw the text
+    var y = -textPaint.ascent()
+    text.split("\n").forEach { line ->
+      canvas.drawText(line, 0f, y, textPaint)
+      y += textHeight
+    }
+
+    return bitmap
+  }
+
+  fun saveBitmapToTempFile(reactApplicationContext: ReactApplicationContext, bitmap: Bitmap): File {
+    val tempFile = File.createTempFile("print", ".png", reactApplicationContext.cacheDir)
+    FileOutputStream(tempFile).use { outputStream ->
+      bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+    }
+    return tempFile
   }
 }

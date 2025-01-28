@@ -105,12 +105,19 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
 
   @ReactMethod
   fun printFromText(text: String, printerQuality: Int, steps: Int, promise: Promise) {
-    try {
-      // Step 1: Create a temporary file
-      val tempFile = createTempFile("print", ".txt", reactApplicationContext.cacheDir)
+    val permissionStatus = ContextCompat.checkSelfPermission(reactApplicationContext, Manifest.permission.READ_EXTERNAL_STORAGE)
 
-      // Step 2: Write the text to the temporary file
-      tempFile.writeText(text)
+    if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
+      promise.reject("PERMISSION_DENIED", "Read external storage permission is required to print from file.")
+      return
+    }
+
+    try {
+      // Step 1: Create a bitmap from the provided text
+      val bitmap = moderninhaUtils.createBitmapFromText(text)
+
+      // Step 2: Save the bitmap as a temporary image file
+      val tempFile = moderninhaUtils.saveBitmapToTempFile(reactApplicationContext, bitmap)
 
       // Step 3: Prepare printer data
       val printerData = PlugPagPrinterData(tempFile.absolutePath, printerQuality, steps)
