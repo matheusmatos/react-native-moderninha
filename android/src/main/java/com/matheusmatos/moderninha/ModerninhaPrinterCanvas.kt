@@ -138,10 +138,11 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
       val tag = line["tag"] ?: return@forEach
       val content = line["content"] ?: ""
       when (tag.uppercase()) {
-        "H1" -> drawText(content, getFontSize("H1"), Paint.Align.CENTER, Typeface.BOLD)
+        "H1" -> drawText(content, getFontSize("H1"), Paint.Align.CENTER, Typeface.NORMAL)
         "H2" -> drawText(content, getFontSize("H2"), Paint.Align.CENTER, Typeface.BOLD)
-        "TEXT" -> drawText(content, getFontSize("TEXT"), Paint.Align.LEFT, Typeface.NORMAL)
-        "SMALL" -> drawText(content, getFontSize("SMALL"), Paint.Align.LEFT, Typeface.NORMAL)
+        "STRONG" -> drawText(content, getFontSize("SMALL"), Paint.Align.CENTER, Typeface.BOLD)
+        "TEXT" -> drawText(content, getFontSize("TEXT"), Paint.Align.CENTER, Typeface.NORMAL)
+        "SMALL" -> drawText(content, getFontSize("SMALL"), Paint.Align.CENTER, Typeface.NORMAL)
         "QRCODE" -> drawQRCode(content)
         "BARCODE" -> drawBarcode(content)
         "IMG" -> drawImage(content)
@@ -168,7 +169,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
       paint.textSize = adjustedTextSize
     }
 
-    canvas?.drawText(text, centerX.toFloat(), incrementY((adjustedTextSize * 1.5).toInt()).toFloat(), paint)
+    canvas?.drawText(text, 0f, incrementY((adjustedTextSize * 1.5).toInt()).toFloat(), paint)
   }
 
   private fun drawQRCode(content: String) {
