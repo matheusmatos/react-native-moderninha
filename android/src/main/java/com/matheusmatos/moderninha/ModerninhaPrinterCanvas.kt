@@ -37,6 +37,38 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
     return fontSizes[tag.uppercase()] ?: (10 * pt) // Default to TEXT size if no match
   }
 
+  fun createBitmapFromText(text: String): Bitmap {
+    // Step 1: Define bitmap dimensions and properties
+    val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+      color = Color.BLACK
+      textSize = getFontSize("SMALL")
+      isAntiAlias = true
+      typeface = Typeface.create("Roboto", Typeface.NORMAL)
+    }
+    val textHeight = textPaint.descent() - textPaint.ascent()
+    val maxWidth = width
+
+    // Step 2: Wrap the text into multiple lines
+    val lines = wrapText(text, textPaint, maxWidth)
+
+    // Calculate the height of the bitmap based on the number of lines
+    val height = (textHeight * lines.size).toInt() + (4 * mm)
+
+    // Step 3: Create the bitmap
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    canvas.drawColor(Color.WHITE) // Set background color
+
+    // Step 4: Draw each line of wrapped text
+    var y = -textPaint.ascent() // Start drawing from the first line
+    lines.forEach { line ->
+      canvas.drawText(line, 0f, y, textPaint) // Add left margin
+      y += textHeight
+    }
+
+    return bitmap
+  }
+
   fun createBitmapFromLines(lines: List<Map<String, String>>): Bitmap {
     val height = calculateHeight(lines)
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
@@ -58,6 +90,28 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
       }
     }
     return totalHeight
+  }
+
+  private fun wrapText(text: String, paint: Paint, maxWidth: Int): List<String> {
+    val words = text.split(" ")
+    val lines = mutableListOf<String>()
+    var currentLine = ""
+
+    for (word in words) {
+      val testLine = if (currentLine.isEmpty()) word else "$currentLine $word"
+      if (paint.measureText(testLine) <= maxWidth) {
+        currentLine = testLine
+      } else {
+        lines.add(currentLine)
+        currentLine = word
+      }
+    }
+
+    if (currentLine.isNotEmpty()) {
+      lines.add(currentLine)
+    }
+
+    return lines
   }
 
   private fun getTextHeight(tag: String): Int {
