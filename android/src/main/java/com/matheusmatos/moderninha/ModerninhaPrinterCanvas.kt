@@ -47,7 +47,7 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float, 
       typeface = Typeface.create("Roboto", Typeface.NORMAL)
     }
     val textHeight = textPaint.descent() - textPaint.ascent()
-    val marginHorizontal = 4 * mm;
+    val marginHorizontal = 0 * mm;
     val maxWidth = width - (2 * marginHorizontal)
 
     // Step 2: Wrap the text into multiple lines
