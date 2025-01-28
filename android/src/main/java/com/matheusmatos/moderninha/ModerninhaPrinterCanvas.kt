@@ -16,8 +16,8 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
 
   // Directly calculate 1mm in pixels
   private val pxPerMm: Float = width.toFloat() / paperSize.toFloat()
-  private val mm = pxPerMm.toInt()
-  private val pt = (mm / 3).toInt()
+  private val mm = pxPerMm.toInt() // 20
+  private val pt = (mm / 3.8).toFloat() // 20 / 3.8 = 5.26
 
   private val paintFillBlack = Paint(Paint.ANTI_ALIAS_FLAG).apply {
     style = Paint.Style.FILL
@@ -27,28 +27,27 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
   private val centerX get() = canvas?.width?.div(2) ?: 0
 
   private val fontSizes = mapOf(
-    "TITLE" to 48f,     // Larger for titles
-    "H1" to 44f,        // Main headings
-    "H2" to 40f,        // Subheadings
-    "SUBTITLE" to 38f,  // Secondary headings
-    "SMALL" to 38f      // Default size for small text
+    "TITLE" to 12*pt,     // Larger for titles
+    "H1" to 12*pt,        // Main headings
+    "H2" to 10*pt,        // Subheadings
+    "SUBTITLE" to 10*pt,  // Secondary headings
+    "SMALL" to 8*pt      // Default size for small text
   )
 
   private fun getFontSize(tag: String): Float {
-    return fontSizes[tag.uppercase()] ?: 24f // Default to SMALL size if no match
+    return fontSizes[tag.uppercase()] ?: (10 * pt) // Default to SMALL size if no match
   }
 
   fun createBitmapFromText(text: String): Bitmap {
     // Step 1: Define bitmap dimensions and properties
     val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
       color = Color.BLACK
-      textSize = 24f // Default text size
+      textSize = getFontSize("SMALL")
       isAntiAlias = true
       typeface = Typeface.create("Roboto", Typeface.NORMAL)
     }
     val textHeight = textPaint.descent() - textPaint.ascent()
-    val marginHorizontal = 0 * mm;
-    val maxWidth = width - (2 * marginHorizontal)
+    val maxWidth = width
 
     // Step 2: Wrap the text into multiple lines
     val lines = wrapText(text, textPaint, maxWidth)
@@ -64,7 +63,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
     // Step 4: Draw each line of wrapped text
     var y = -textPaint.ascent() // Start drawing from the first line
     lines.forEach { line ->
-      canvas.drawText(line, 10 * pt.toFloat(), y, textPaint) // Add left margin
+      canvas.drawText(line, 0f, y, textPaint) // Add left margin
       y += textHeight
     }
 
