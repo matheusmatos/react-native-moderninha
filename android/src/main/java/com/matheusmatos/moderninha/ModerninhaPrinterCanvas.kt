@@ -6,17 +6,16 @@ import android.util.Log
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 
-class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) {
+class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float, private val dpi: Int = 203) {
   companion object {
     const val TAG = "ModerninhaPrinterCanvas"
-    const val width = 384;
   }
 
   private var canvas: Canvas? = null
   private var cY = 0
-  private var px = (1 * scale).toInt()
-  private var mm = 13 * px
-  private var pt = 3 * px
+  private val px: Float = dpi / 25.4f // Pixels per millimeter based on DPI
+  private val mm = (1 * px).toInt()
+  private val pt = (px / 3).toInt()
 
   private val paintFillBlack = Paint(Paint.ANTI_ALIAS_FLAG).apply {
     style = Paint.Style.FILL
@@ -48,7 +47,8 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) 
       typeface = Typeface.create("Roboto", Typeface.NORMAL)
     }
     val textHeight = textPaint.descent() - textPaint.ascent()
-    val maxWidth = width - (2 * 10 * px) // Leave margins on both sides
+    val marginHorizontal = 4 * mm;
+    val maxWidth = width - (2 * marginHorizontal)
 
     // Step 2: Wrap the text into multiple lines
     val lines = wrapText(text, textPaint, maxWidth)
@@ -156,10 +156,10 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) 
   }
 
   private fun drawQRCode(content: String, maxSize: Int) {
-    val size = (maxSize.coerceAtMost((width * 0.6).toInt())) // Limit QR code size to 60% of the paper width
+    val size = (maxSize.coerceAtMost((width * 0.3).toInt())) // Limit QR code size to 30% of the paper width
     val bitmap = generateQRCode(content, size)
     val left = (width - bitmap.width) / 2 // Center the QR code
-    canvas?.drawBitmap(bitmap, left.toFloat(), incrementY(4 * mm).toFloat(), null)
+    canvas?.drawBitmap(bitmap, left.toFloat(), incrementY(2 * mm).toFloat(), null)
     incrementY(bitmap.height)
   }
 
