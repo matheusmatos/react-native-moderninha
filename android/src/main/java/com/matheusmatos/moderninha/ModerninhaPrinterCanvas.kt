@@ -6,14 +6,14 @@ import android.util.Log
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 
-class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float, private val dpi: Int = 203) {
+class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float) {
   companion object {
     const val TAG = "ModerninhaPrinterCanvas"
   }
 
   private var canvas: Canvas? = null
   private var cY = 0
-  private val px: Float = dpi / 25.4f // Pixels per millimeter based on DPI
+  private val px = (1 * scale).toInt(); // Pixels per millimeter based on DPI
   private val mm = (1 * px).toInt()
   private val pt = (px / 3).toInt()
 
@@ -21,8 +21,6 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float, 
     style = Paint.Style.FILL
     color = Color.BLACK
   }
-
-  private val basicPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.BLACK }
 
   private val centerX get() = canvas?.width?.div(2) ?: 0
 
@@ -85,8 +83,8 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float, 
     lines.forEach { line ->
       totalHeight += when (line["tag"]?.uppercase()) {
         "HR" -> 3 * mm
-        "QRCODE" -> 15 * mm
-        "BARCODE" -> 8 * mm
+        "QRCODE" -> 6 * mm
+        "BARCODE" -> 6 * mm
         "IMG" -> line["content"]?.let { decodeBase64Image(it)?.height } ?: 0
         else -> 4 * mm
       }
@@ -215,8 +213,11 @@ class ModerninhaPrinterCanvas(private val width: Int, private val scale: Float, 
   }
 
   private fun drawSeparator() {
-    val rect = Rect(0, incrementY(3 * mm), width, incrementY(1))
-    canvas?.drawRect(rect, paintFillBlack)
+    val lineHeight = 5 * mm // Height of the separator in pixels
+    val top = incrementY(lineHeight) // Current Y-coordinate
+    val rect = Rect(0, top, width, top + lineHeight) // Define the rectangle for the separator
+    canvas?.drawRect(rect, paintFillBlack) // Draw the separator
+    incrementY(lineHeight) // Increment Y again for spacing
   }
 
   private fun incrementY(amount: Int): Int {
