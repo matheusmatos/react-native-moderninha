@@ -1,6 +1,6 @@
 {
     "name": "react-native-moderninha",
-    "version": "0.7.19",
+    "version": "0.7.20",
     "description": "Biblioteca React Native que integra o SDK oficial pagseguro-sdk-plugpagservicewrapper para interagir com as Moderninhas Smart do Pagbank.",
     "main": "lib/commonjs/index",
     "module": "lib/module/index",
