@@ -219,6 +219,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
     val left = (width - scaledBitmap.width) / 2
     canvas?.drawBitmap(scaledBitmap, left.toFloat(), incrementY(4 * mm).toFloat(), null)
     incrementY(scaledBitmap.height)
+    incrementY(marginVertical)
   }
 
   private fun decodeBase64Image(base64Content: String): Bitmap? {
@@ -228,7 +229,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
       BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
     } catch (e: Exception) {
       Log.e(TAG, "Failed to decode Base64 image", e)
-      null
+      throw e
     }
   }
 
