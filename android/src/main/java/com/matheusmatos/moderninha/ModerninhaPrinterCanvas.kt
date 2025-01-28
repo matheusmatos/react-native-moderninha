@@ -27,11 +27,10 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
   private val centerX get() = canvas?.width?.div(2) ?: 0
 
   private val fontSizes = mapOf(
-    "TITLE" to 12*pt,     // Larger for titles
     "H1" to 12*pt,        // Main headings
     "H2" to 10*pt,        // Subheadings
-    "SUBTITLE" to 10*pt,  // Secondary headings
-    "SMALL" to 8*pt      // Default size for small text
+    "TEXT" to 10*pt,      // Default size for small text
+    "SMALL" to 8*pt,      // Default size for small text
   )
 
   private fun getFontSize(tag: String): Float {
@@ -83,9 +82,9 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
     var totalHeight = 0
     lines.forEach { line ->
       totalHeight += when (line["tag"]?.uppercase()) {
-        "HR" -> 1 * mm
-        "QRCODE" -> 6 * mm
-        "BARCODE" -> 6 * mm
+        "HR" -> (1 * mm) / 3
+        "QRCODE" -> 16 * mm + 4 * mm
+        "BARCODE" -> 8 * mm + 4 * mm
         "IMG" -> line["content"]?.let { decodeBase64Image(it)?.height } ?: 0
         else -> 4 * mm
       }
@@ -120,15 +119,16 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
       val tag = line["tag"] ?: return@forEach
       val content = line["content"] ?: ""
       when (tag.uppercase()) {
-        "TITLE", "H1" -> drawText(content, getFontSize("TITLE"), Paint.Align.CENTER, Typeface.BOLD)
-        "SUBTITLE", "H2" -> drawText(content, getFontSize("SUBTITLE"), Paint.Align.CENTER, Typeface.BOLD)
-        "STRONG" -> drawText(content, getFontSize("H2"), Paint.Align.CENTER, Typeface.BOLD)
+        "H1" -> drawText(content, getFontSize("TITLE"), Paint.Align.CENTER, Typeface.BOLD)
+        "H2" -> drawText(content, getFontSize("SUBTITLE"), Paint.Align.CENTER, Typeface.BOLD)
+        "TEXT" -> drawText(content, getFontSize("TEXT"), Paint.Align.CENTER, Typeface.NORMAL)
+        "STRONG" -> drawText(content, getFontSize("TEXT"), Paint.Align.CENTER, Typeface.BOLD)
         "SMALL" -> drawText(content, getFontSize("SMALL"), Paint.Align.CENTER, Typeface.NORMAL)
-        "QRCODE" -> drawQRCode(content, 15 * mm)
+        "QRCODE" -> drawQRCode(content)
         "BARCODE" -> drawBarcode(content)
         "IMG" -> drawImage(content)
         "HR" -> drawSeparator()
-        else -> drawText(content, getFontSize("SMALL"), Paint.Align.CENTER, Typeface.NORMAL)
+        else -> drawText(content, getFontSize("TEXT"), Paint.Align.CENTER, Typeface.NORMAL)
       }
     }
   }
@@ -154,8 +154,8 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
     canvas?.drawText(text, centerX.toFloat(), incrementY((adjustedTextSize * 1.5).toInt()).toFloat(), paint)
   }
 
-  private fun drawQRCode(content: String, maxSize: Int) {
-    val size = (maxSize.coerceAtMost((width * 0.3).toInt())) // Limit QR code size to 30% of the paper width
+  private fun drawQRCode(content: String) {
+    val size = width / 3 // Limit QR code size to 1/3 of the paper width
     val bitmap = generateQRCode(content, size)
     val left = (width - bitmap.width) / 2 // Center the QR code
     canvas?.drawBitmap(bitmap, left.toFloat(), incrementY(2 * mm).toFloat(), null)
@@ -214,7 +214,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
   }
 
   private fun drawSeparator() {
-    val lineHeight = 1 * mm // Height of the separator in pixels
+    val lineHeight = (1 * mm) / 3
     val top = incrementY(lineHeight) // Current Y-coordinate
     val rect = Rect(0, top, width, top + lineHeight) // Define the rectangle for the separator
     canvas?.drawRect(rect, paintFillBlack) // Draw the separator
