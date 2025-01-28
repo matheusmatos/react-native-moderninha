@@ -17,7 +17,8 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
   // Directly calculate 1mm in pixels
   private val pxPerMm: Float = width.toFloat() / paperSize.toFloat()
   private val mm = pxPerMm.toInt()
-  private val pt = (mm / 3.4).toFloat() // Slightly larger for better readability
+  private val pt = (mm / 3.6).toFloat() // Slightly larger for better readability
+  private val marginVertical = 2 * mm // Vertical margin of 2mm
 
   private val paintFillBlack = Paint(Paint.ANTI_ALIAS_FLAG).apply {
     style = Paint.Style.FILL
@@ -82,9 +83,9 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
     var totalHeight = 0
     lines.forEach { line ->
       totalHeight += when (line["tag"]?.uppercase()) {
-        "HR" -> getSeparatorHeight()
-        "QRCODE" -> getQRCodeHeight()
-        "BARCODE" -> getBarcodeHeight()
+        "SEPARATOR" -> getSeparatorHeight() + (marginVertical * 2)
+        "QRCODE" -> getQRCodeHeight() + (marginVertical * 4)
+        "BARCODE" -> getBarcodeHeight() + (marginVertical * 2)
         "IMG" -> line["content"]?.let { decodeBase64Image(it)?.height } ?: 0
         else -> getTextHeight(line["tag"] ?: "TEXT")
       }
@@ -169,7 +170,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
       paint.textSize = adjustedTextSize
     }
 
-    canvas?.drawText(text, centerX.toFloat(), incrementY((adjustedTextSize * 1.2).toInt()).toFloat(), paint)
+    canvas?.drawText(text, centerX.toFloat(), incrementY((adjustedTextSize * 1.3).toInt()).toFloat(), paint)
   }
 
   private fun drawQRCode(content: String) {
@@ -233,9 +234,10 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
 
   private fun drawSeparator() {
     val lineHeight = getSeparatorHeight()
-    val top = incrementY(lineHeight) // Current Y-coordinate
+    val top = incrementY(lineHeight + marginVertical) // Current Y-coordinate
     val rect = Rect(0, top, width, top + lineHeight) // Define the rectangle for the separator
     canvas?.drawRect(rect, paintFillBlack) // Draw the separator
+    incrementY(marginVertical)
   }
 
   private fun incrementY(amount: Int): Int {
