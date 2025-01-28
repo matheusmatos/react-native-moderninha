@@ -10,6 +10,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 
@@ -96,11 +97,12 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
 
   @ReactMethod
   fun printFromText(text: String, printerQuality: Int, steps: Int, promise: Promise) {
-    if (!hasReadPermission()) {
-      promise.reject("PERMISSION_DENIED", "Read external storage permission is required to print.")
-      return
-    }
     moderninhaPrinter.printFromText(reactApplicationContext, text, printerQuality, steps, promise)
+  }
+
+  @ReactMethod
+  fun printFromLines(lines: ReadableArray, printerQuality: Int, steps: Int, promise: Promise) {
+    moderninhaPrinter.printFromLines(reactApplicationContext, lines, printerQuality, steps, promise)
   }
 
   @ReactMethod
@@ -110,15 +112,6 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
       return
     }
     moderninhaPrinter.printFromFile(reactApplicationContext, filePath, printerQuality, steps, promise)
-  }
-
-  @ReactMethod
-  fun printFromLines(lines: List<Map<String, String>>, printerQuality: Int, steps: Int, promise: Promise) {
-    if (!hasReadPermission()) {
-      promise.reject("PERMISSION_DENIED", "Read external storage permission is required to print.")
-      return
-    }
-    moderninhaPrinter.printFromLines(reactApplicationContext, lines, printerQuality, steps, promise)
   }
 
   private fun hasReadPermission(): Boolean {

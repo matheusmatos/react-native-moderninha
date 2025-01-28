@@ -9,6 +9,7 @@ import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagPrinterListener
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReadableArray
 import java.io.File
 import java.io.FileOutputStream
 
@@ -24,6 +25,25 @@ class ModerninhaPrinter(private val plugPag: PlugPag) {
       bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
     }
     return tempFile
+  }
+
+  private fun readableArrayToList(readableArray: ReadableArray): List<Map<String, String>> {
+    val list = mutableListOf<Map<String, String>>()
+
+    for (i in 0 until readableArray.size()) {
+      val readableMap = readableArray.getMap(i)
+      val map = mutableMapOf<String, String>()
+
+      val iterator = readableMap.keySetIterator()
+      while (iterator.hasNextKey()) {
+        val key = iterator.nextKey()
+        map[key] = readableMap.getString(key) ?: ""
+      }
+
+      list.add(map)
+    }
+
+    return list
   }
 
   // Print text, file, or lines methods here, as discussed earlier.
@@ -53,21 +73,24 @@ class ModerninhaPrinter(private val plugPag: PlugPag) {
 
   fun printFromLines(
     context: ReactApplicationContext,
-    lines: List<Map<String, String>>,
+    lines: ReadableArray,
     printerQuality: Int,
     steps: Int,
     promise: Promise
   ) {
       try {
-        // Step 1: Create the bitmap using ModerninhaPrinterCanvas
+        // Step 1: Convert ReadableArray to List<Map<String, String>>
+        val convertedLines = readableArrayToList(lines)
+
+        // Step 2: Create the bitmap using ModerninhaPrinterCanvas
         val scale = context.resources.displayMetrics.density
         val printerCanvas = ModerninhaPrinterCanvas(384, scale) // Width is typically 384px for thermal printers
-        val bitmap = printerCanvas.createBitmapFromLines(lines)
+        val bitmap = printerCanvas.createBitmapFromLines(convertedLines)
 
-        // Step 2: Save the bitmap to a file
+        // Step 3: Save the bitmap to a file
         val savedFile = saveBitmapToTempFile(context, bitmap)
 
-        // Step 3: Print using the existing SDK (PlugPag)
+        // Step 4: Print using the existing SDK (PlugPag)
         printFromFile(context, savedFile.absolutePath, printerQuality, steps, promise, deleteFile = true)
       } catch (e: Exception) {
         Log.e(TAG, "Error in printFromLines: ${e.message}", e)
