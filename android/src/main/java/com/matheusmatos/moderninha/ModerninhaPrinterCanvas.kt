@@ -27,11 +27,11 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
   private val centerX get() = canvas?.width?.div(2) ?: 0
 
   private val fontSizes = mapOf(
-    "TITLE" to 28f,      // Larger for titles
-    "H1" to 28f,         // Main headings
-    "H2" to 26f,         // Subheadings
-    "SUBTITLE" to 26f,   // Secondary headings
-    "SMALL" to 24f       // Default size for small text
+    "TITLE" to 48f,     // Larger for titles
+    "H1" to 44f,        // Main headings
+    "H2" to 40f,        // Subheadings
+    "SUBTITLE" to 38f,  // Secondary headings
+    "SMALL" to 38f      // Default size for small text
   )
 
   private fun getFontSize(tag: String): Float {
@@ -142,17 +142,17 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
       this.color = Color.BLACK
     }
 
-    val maxWidth = width - (2 * 10 * pt) // Leave margins on both sides
+    val maxWidth = width // Leave margins on both sides
 
     // Scale down font size if text exceeds max width
     var adjustedTextSize = textSize
-    while (paint.measureText(text) > maxWidth && adjustedTextSize > 8f) { // Prevent text size from being too small
+    while (paint.measureText(text) > maxWidth && adjustedTextSize > 10f) { // Prevent text size from being too small
       adjustedTextSize -= 1f
       paint.textSize = adjustedTextSize
     }
 
     // Draw the text on the canvas
-    canvas?.drawText(text, centerX.toFloat(), incrementY((adjustedTextSize * 1.2).toInt()).toFloat(), paint)
+    canvas?.drawText(text, centerX.toFloat(), incrementY((adjustedTextSize * 1.5).toInt()).toFloat(), paint)
   }
 
   private fun drawQRCode(content: String, maxSize: Int) {
