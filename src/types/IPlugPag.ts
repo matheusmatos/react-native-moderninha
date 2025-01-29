@@ -47,6 +47,51 @@ export type PrintLine = {
   content?: string;
 };
 
+/**
+ * Dados do titular da conta PlugPag.
+ */
+export type PlugPagUserDataResult = {
+  /**
+   * Endereço físico do titular da conta.
+   * */
+  address?: string;
+
+  /**
+   * Cidade do titular da conta.
+   **/
+  city?: string;
+
+  /**
+   * CPF/CNPJ do titular da conta.
+   **/
+  cnpjCpf?: string;
+
+  /**
+   * Complemento do endereço do titular da conta.
+   **/
+  addressComplement?: string;
+
+  /**
+   * Nome fantasia do titular da conta.
+   **/
+  companyName?: string;
+
+  /**
+   * Nome de usuário do titular da conta.
+   **/
+  userNickName?: string;
+
+  /**
+   * Estado do endereço do titular da conta.
+   **/
+  addressState?: string;
+
+  /**
+   * E-mail do titular da conta.
+   **/
+  email?: string;
+};
+
 export interface IPlugPag {
   /**
    * Executes a beep sound.
@@ -107,4 +152,17 @@ export interface IPlugPag {
     printerQuality?: number,
     steps?: number
   ): Promise<boolean>;
+
+  /**
+   * Executa uma solicitação de consulta de dados do usuário do terminal.
+   * @returns Valores resultantes da consulta de dados do usuário.
+   * @throws PlugPagException Caso a definição de usuário não obtenha sucesso.
+   */
+  getUserData(): PlugPagUserDataResult;
+
+  /**
+   * Verifica se existe um usuário autenticado.
+   * @returns `true` se um usuário estiver autenticado, `false` caso contrário.
+   */
+  isAuthenticated(): boolean;
 }

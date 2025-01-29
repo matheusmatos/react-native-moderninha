@@ -42,7 +42,7 @@ class ModerninhaPrinterCanvas(private val width: Int = 960, private val paperSiz
     // Step 1: Define bitmap dimensions and properties
     val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
       color = Color.BLACK
-      textSize = getFontSize("SMALL")
+      textSize = getFontSize("TEXT")
       isAntiAlias = true
       typeface = Typeface.create("Roboto", Typeface.NORMAL)
     }

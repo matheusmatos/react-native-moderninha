@@ -12,11 +12,23 @@ npm install react-native-moderninha
 
 
 ```js
-import { multiply } from 'react-native-moderninha';
+import PlugPag, { BeepDataConstants, PlugPagUserDataResult } from 'react-native-moderninha';
 
 // ...
 
-const result = await multiply(3, 7);
+let isAuthenticated = PlugPag.isAuthenticated();
+let userData: PlugPagUserDataResult = PlugPag.getUserData();
+
+console.log({ isAuthenticated, userData });
+
+PlugPag.beep({
+    frequency: BeepDataConstants.FREQUENCY_LEVEL_1,
+    duration: 200,
+}).then((result) => {
+    console.log("onBeep.result:", result);
+}).catch((err) => {
+    console.error("onBeep.error:", err);
+});
 ```
 
 

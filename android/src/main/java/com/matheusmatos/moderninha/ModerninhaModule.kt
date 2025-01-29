@@ -75,8 +75,8 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
     return plugPag.isAuthenticated()
   }
 
-  @ReactMethod
-  fun getUserData(promise: Promise) {
+  @ReactMethod(isBlockingSynchronousMethod = true)
+  fun getUserData(): ReadableMap {
     try {
       val userData = plugPag.getUserData()
       val map = Arguments.createMap().apply {
@@ -89,9 +89,9 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
         putString("addressState", userData.addressState.orNullIfEmpty())
         putString("email", userData.email.orNullIfEmpty())
       }
-      promise.resolve(map)
+      return map
     } catch (e: Exception) {
-      promise.reject("ERROR", e.message, e)
+      throw e;
     }
   }
 

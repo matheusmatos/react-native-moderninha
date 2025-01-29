@@ -1,4 +1,9 @@
-import type { IPlugPag, PlugPagBeepData, PrintLine } from '../types';
+import type {
+  IPlugPag,
+  PlugPagBeepData,
+  PlugPagUserDataResult,
+  PrintLine,
+} from '../types';
 
 export default class FallbackPlugPag implements IPlugPag {
   beep(_beepData: PlugPagBeepData): Promise<number> {
@@ -13,6 +18,19 @@ export default class FallbackPlugPag implements IPlugPag {
   isAuthenticated(): boolean {
     console.warn('isAuthenticated is not available on this platform');
     return false;
+  }
+
+  getUserData(): PlugPagUserDataResult {
+    return {
+      address: 'Rua do Desenvolvedor, 123',
+      city: 'São Paulo',
+      cnpjCpf: '123.456.789-00',
+      addressComplement: 'Sala 123',
+      companyName: 'Empresa de Tecnologia',
+      userNickName: 'dev',
+      addressState: 'SP',
+      email: '',
+    };
   }
 
   hasCapability(_capability: number): boolean {

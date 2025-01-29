@@ -1,4 +1,9 @@
-import type { IPlugPag, PlugPagBeepData, PrintLine } from '../types';
+import type {
+  IPlugPag,
+  PlugPagBeepData,
+  PrintLine,
+  PlugPagUserDataResult,
+} from '../types';
 import Moderninha from '../Moderninha';
 
 export default class NativePlugPag implements IPlugPag {
@@ -12,6 +17,10 @@ export default class NativePlugPag implements IPlugPag {
 
   isAuthenticated(): boolean {
     return Moderninha.isAuthenticated();
+  }
+
+  getUserData(): PlugPagUserDataResult {
+    return Moderninha.getUserData();
   }
 
   hasCapability(capability: number): boolean {
