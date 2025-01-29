@@ -31,7 +31,9 @@
         "lint": "eslint \"**/*.{js,ts,tsx}\"",
         "clean": "del-cli android/build example/android/build example/android/app/build lib",
         "prepare": "bob build",
-        "release": "release-it"
+        "release": "release-it",
+        "docs": "typedoc",
+        "deploy-docs": "npm run docs && git add docs && git commit -m 'Update docs' && git push"
     },
     "keywords": [
         "react-native",
@@ -70,6 +72,7 @@
         "react-native-builder-bob": "^0.30.2",
         "release-it": "^15.0.0",
         "turbo": "^1.10.7",
+        "typedoc": "^0.27.6",
         "typescript": "^5.2.2"
     },
     "resolutions": {
