@@ -20,7 +20,9 @@ export default class NativePlugPag implements IPlugPag {
   }
 
   getUserData(): PlugPagUserDataResult {
-    return Moderninha.getUserData();
+    const userDataJson = Moderninha.getUserData();
+    const userData: PlugPagUserDataResult = JSON.parse(userDataJson);
+    return userData;
   }
 
   hasCapability(capability: number): boolean {

@@ -13,6 +13,7 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
+import org.json.JSONObject
 
 @ReactModule(name = ModerninhaModule.TAG)
 @Suppress("unused")
@@ -76,8 +77,8 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
-  fun getUserData(): ReadableMap {
-    try {
+  fun getUserData(): String {
+    return try {
       val userData = plugPag.getUserData()
       val map = Arguments.createMap().apply {
         putString("address", userData.address.orNullIfEmpty())
@@ -89,7 +90,12 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
         putString("addressState", userData.addressState.orNullIfEmpty())
         putString("email", userData.email.orNullIfEmpty())
       }
-      return map
+
+      val json = JSONObject()
+      for (entry in map.entryIterator) {
+        json.put(entry.key, entry.value)
+      }
+      json.toString()
     } catch (e: Exception) {
       throw e;
     }
