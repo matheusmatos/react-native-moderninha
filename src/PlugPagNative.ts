@@ -32,8 +32,8 @@ export default class PlugPagNative extends IPlugPagBaseImpl {
   ): Promise<PlugPagPrintResult> {
     return Moderninha.printFromFile(
       printerData.filePath,
-      printerData.printerQuality,
-      printerData.steps
+      printerData.printerQuality || 0,
+      printerData.steps || 0
     ).then((success: boolean) => ({
       result: success ? 0 : -1,
       errorCode: 0,
@@ -45,8 +45,8 @@ export default class PlugPagNative extends IPlugPagBaseImpl {
   ): Promise<PlugPagPrintResult> {
     return Moderninha.printFromText(
       printerData.text,
-      printerData.printerQuality,
-      printerData.steps
+      printerData.printerQuality || 0,
+      printerData.steps || 0
     );
   }
   async printFromLines(
@@ -54,8 +54,8 @@ export default class PlugPagNative extends IPlugPagBaseImpl {
   ): Promise<PlugPagPrintResult> {
     return Moderninha.printFromLines(
       printerData.lines,
-      printerData.printerQuality,
-      printerData.steps
+      printerData.printerQuality || 0,
+      printerData.steps || 0
     );
   }
 }
