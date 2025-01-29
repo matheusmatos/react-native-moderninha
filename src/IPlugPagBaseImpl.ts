@@ -167,6 +167,9 @@ export default class PlugPagBaseImpl
   isAuthenticated(): boolean {
     throw new Error('Method isAuthenticated() not implemented.');
   }
+  isModerninha(): boolean {
+    throw new Error('Method isModerninha() not implemented.');
+  }
   isServiceBusy(): boolean {
     throw new Error('Method isServiceBusy() not implemented.');
   }

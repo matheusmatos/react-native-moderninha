@@ -15,6 +15,9 @@ export default class PlugPagFallback extends IPlugPagBaseImpl {
   isAuthenticated(): boolean {
     return true;
   }
+  isModerninha(): boolean {
+    return false;
+  }
   getUserData(): PlugPagUserDataResult {
     return {
       address: 'AVENIDA BRIGADEIRO FARIA LIMA 1232',
@@ -30,7 +33,6 @@ export default class PlugPagFallback extends IPlugPagBaseImpl {
     console.warn('hasCapability is not available on this platform');
     return false;
   }
-
   printFromText(
     _text: string,
     _printerQuality?: number,
@@ -39,7 +41,6 @@ export default class PlugPagFallback extends IPlugPagBaseImpl {
     console.warn('printFromText is not available on this platform');
     return Promise.resolve(false);
   }
-
   printFromLines(
     _printLines: PrintLine[],
     _printerQuality?: number,
@@ -48,7 +49,6 @@ export default class PlugPagFallback extends IPlugPagBaseImpl {
     console.warn('printFromLines is not available on this platform');
     return Promise.resolve(false);
   }
-
   printFromFile(printerData: PlugPagPrinterData): Promise<PlugPagPrintResult> {
     console.warn('printFromFile() is not available on this platform');
     const result: PlugPagPrintResult = {
