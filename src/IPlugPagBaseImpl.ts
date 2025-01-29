@@ -46,218 +46,209 @@ export default class PlugPagBaseImpl
   implements IPlugPag
 {
   abort(): PlugPagAbortResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method abort() not implemented.');
   }
   abortNFC(): PlugPagNFCResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method abortNFC() not implemented.');
   }
   apduCommand(
     _command: Uint8Array,
     _dataLength: number
   ): PlugPagCmdExchangeResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method apduCommand() not implemented.');
   }
   authNFCCardDirectly(_authData: PlugPagNFCAuth, _timeout: number): number {
-    throw new Error('Method not implemented.');
+    throw new Error('Method authNFCCardDirectly() not implemented.');
   }
   beep(_beepData: PlugPagBeepData): Promise<number> {
-    throw new Error('Method not implemented.');
+    throw new Error('Method beep() not implemented.');
   }
   calculateInstallments(
     _saleValue: string,
     _installmentType: number
   ): PlugPagInstallment[] {
-    throw new Error('Method not implemented.');
+    throw new Error('Method calculateInstallments() not implemented.');
   }
   checkPermissionPlugPagService(): boolean {
-    throw new Error('Method not implemented.');
+    throw new Error('Method checkPermissionPlugPagService() not implemented.');
   }
   deactivate(
     _activationData: PlugPagActivationData
   ): PlugPagInitializationResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method deactivate() not implemented.');
   }
   detectNfcCardDirectly(
     _cardType: number,
     _timeout: number
   ): PlugPagNFCInfosResultDirectly {
-    throw new Error('Method not implemented.');
+    throw new Error('Method detectNfcCardDirectly() not implemented.');
   }
   detectNfcRemoveDirectly(_detectRemove: PlugPagNFCDetectRemoveCard): number {
-    throw new Error('Method not implemented.');
+    throw new Error('Method detectNfcRemoveDirectly() not implemented.');
   }
   doEffectuatePreAuto(
     _effectuatePreAutoData: PlugPagEffectuatePreAutoData
   ): PlugPagTransactionResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method doEffectuatePreAuto() not implemented.');
   }
   doPayment(_paymentData: PlugPagPaymentData): PlugPagTransactionResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method doPayment() not implemented.');
   }
   doPreAutoCancel(
     _transactionId: string,
     _transactionCode: string
   ): PlugPagTransactionResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method doPreAutoCancel() not implemented.');
   }
   doPreAutoCreate(
     _plugPagData: PlugPagPreAutoData | PlugPagPreAutoKeyingData
   ): PlugPagTransactionResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method doPreAutoCreate() not implemented.');
   }
   doPrintAction(_action: number, _phoneNumber?: string): void {
-    throw new Error('Method not implemented.');
+    throw new Error('Method doPrintAction() not implemented.');
   }
   getCardData(): PlugPagCardInfoResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method getCardData() not implemented.');
   }
   getKeyedInPreAutoData(
     _plugPagPreAutoQueryData: PlugPagPreAutoQueryData
   ): PlugPagTransactionResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method getKeyedInPreAutoData() not implemented.');
   }
   getLastApprovedTransaction(): PlugPagTransactionResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method getLastApprovedTransaction() not implemented.');
   }
   getNFCInfos(_cardType: number): PlugPagNFCInfosResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method getNFCInfos() not implemented.');
   }
   getPreAutoData(
     _plugPagPreAutoQueryData?: PlugPagPreAutoQueryData
   ): PlugPagTransactionResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method getPreAutoData() not implemented.');
   }
   getPreAutoList(): PlugPagPreAutoQueryResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method getPreAutoList() not implemented.');
   }
   getSubAcquirerData(): PlugPagSubAcquirerResult | null {
-    throw new Error('Method not implemented.');
+    throw new Error('Method getSubAcquirerData() not implemented.');
   }
   getUserData(): PlugPagUserDataResult {
-    return {
-      address: 'Rua do Desenvolvedor, 123',
-      city: 'São Paulo',
-      cnpjCpf: '123.456.789-00',
-      addressComplement: 'Sala 123',
-      companyName: 'Empresa de Tecnologia',
-      userNickName: 'dev',
-      addressState: 'SP',
-      email: '',
-    };
+    throw new Error('Method getUserData() not implemented.');
   }
   hasCapability(_capability: number): boolean {
-    throw new Error('Method not implemented.');
+    throw new Error('Method hasCapability() not implemented.');
   }
   hasSoftwareCapability(_operation: number, _mode?: number): boolean {
-    throw new Error('Method not implemented.');
+    throw new Error('Method hasSoftwareCapability() not implemented.');
   }
   hasSubAcquirer(): boolean {
-    throw new Error('Method not implemented.');
+    throw new Error('Method hasSubAcquirer() not implemented.');
   }
   initializeAndActivatePinpad(
     _activationData: PlugPagActivationData
   ): PlugPagInitializationResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method initializeAndActivatePinpad() not implemented.');
   }
   initializeSubAcquirer(
     _data: PlugPagSubAcquirerData
   ): PlugPagInitializationResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method initializeSubAcquirer() not implemented.');
   }
   initPagBankActivation(): PlugPagPagBankActivationResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method initPagBankActivation() not implemented.');
   }
   invalidateAuthentication(): void {
-    throw new Error('Method not implemented.');
+    throw new Error('Method invalidateAuthentication() not implemented.');
   }
   invalidateSubAcquirer(): boolean {
-    throw new Error('Method not implemented.');
+    throw new Error('Method invalidateSubAcquirer() not implemented.');
   }
   isAuthenticated(): boolean {
-    throw new Error('Method not implemented.');
+    throw new Error('Method isAuthenticated() not implemented.');
   }
   isServiceBusy(): boolean {
-    throw new Error('Method not implemented.');
+    throw new Error('Method isServiceBusy() not implemented.');
   }
   justAuthNfcDirectly(_plugPagNFCAuthDirectly: PlugPagNFCAuthDirectly): number {
-    throw new Error('Method not implemented.');
+    throw new Error('Method justAuthNfcDirectly() not implemented.');
   }
   printFromFile(_printerData: PlugPagPrinterData): Promise<PlugPagPrintResult> {
-    throw new Error('Method not implemented.');
+    throw new Error('Method printFromFile() not implemented.');
   }
   printFromLines(
     _printLines: PrintLine[],
     _printerQuality?: number,
     _steps?: number
   ): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    throw new Error('Method printFromLines() not implemented.');
   }
   printFromText(
     _text: string,
     _printerQuality?: number,
     _steps?: number
   ): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    throw new Error('Method printFromText() not implemented.');
   }
   readFromNFCCard(_cardData: PlugPagNearFieldCardData): PlugPagNFCResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method readFromNFCCard() not implemented.');
   }
   readNFCCardDirectly(_cardData: PlugPagSimpleNFCData): PlugPagNFCResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method readNFCCardDirectly() not implemented.');
   }
   reboot(): void {
-    throw new Error('Method not implemented.');
+    throw new Error('Method reboot() not implemented.');
   }
   reprintCustomerReceipt(): PlugPagPrintResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method reprintCustomerReceipt() not implemented.');
   }
   reprintStablishmentReceipt(): PlugPagPrintResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method reprintStablishmentReceipt() not implemented.');
   }
   sendReceiptSMS(_smsData: PlugPagReceiptSMSData): boolean {
-    throw new Error('Method not implemented.');
+    throw new Error('Method sendReceiptSMS() not implemented.');
   }
   setEventListener(_listener: PlugPagEventListener): void {
-    throw new Error('Method not implemented.');
+    throw new Error('Method setEventListener() not implemented.');
   }
   setLed(_ledData: PlugPagLedData): number {
-    throw new Error('Method not implemented.');
+    throw new Error('Method setLed() not implemented.');
   }
   setPlugPagCustomPrinterLayout(
     _plugPagCustomPrinterLayout: PlugPagCustomPrinterLayout
   ): void {
-    throw new Error('Method not implemented.');
+    throw new Error('Method setPlugPagCustomPrinterLayout() not implemented.');
   }
   setPrintActionListener(
     _printListener?: PlugPagPrintActionListener
   ): PlugPagPrintActionResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method setPrintActionListener() not implemented.');
   }
   setPrinterListener(_listener: PlugPagPrinterListener): void {
-    throw new Error('Method not implemented.');
+    throw new Error('Method setPrinterListener() not implemented.');
   }
   setStyleData(_styleData: PlugPagStyleData): boolean {
-    throw new Error('Method not implemented.');
+    throw new Error('Method setStyleData() not implemented.');
   }
   startNFCCardDirectly(): number {
-    throw new Error('Method not implemented.');
+    throw new Error('Method startNFCCardDirectly() not implemented.');
   }
   startOnBoarding(): void {
-    throw new Error('Method not implemented.');
+    throw new Error('Method startOnBoarding() not implemented.');
   }
   stopNFCCardDirectly(): number {
-    throw new Error('Method not implemented.');
+    throw new Error('Method stopNFCCardDirectly() not implemented.');
   }
   updateRemoteConfig(): number {
-    throw new Error('Method not implemented.');
+    throw new Error('Method updateRemoteConfig() not implemented.');
   }
   voidPayment(_voidData: PlugPagVoidData): PlugPagTransactionResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method voidPayment() not implemented.');
   }
   writeToNFCCard(_cardData: PlugPagNearFieldCardData): PlugPagNFCResult {
-    throw new Error('Method not implemented.');
+    throw new Error('Method writeToNFCCard() not implemented.');
   }
   writeToNFCCardDirectly(_cardData: PlugPagSimpleNFCData): number {
-    throw new Error('Method not implemented.');
+    throw new Error('Method writeToNFCCardDirectly() not implemented.');
   }
 }
