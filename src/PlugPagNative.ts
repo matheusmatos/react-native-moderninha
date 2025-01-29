@@ -13,10 +13,6 @@ export default class PlugPagNative extends IPlugPagBaseImpl {
     return Moderninha.beep(beepData);
   }
 
-  multiply(a: number, b: number): Promise<number> {
-    return Moderninha.multiply(a, b);
-  }
-
   isAuthenticated(): boolean {
     return Moderninha.isAuthenticated();
   }
