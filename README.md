@@ -21,6 +21,8 @@ let userData: PlugPagUserDataResult = PlugPag.getUserData();
 
 console.log({ isAuthenticated, userData });
 
+// >> {"isAuthenticated": true, "userData": {"address": "AVENIDA BRIGADEIRO FARIA LIMA 1232", "addressComplement": "4 ANDAR", "addressState": "SP", "city": "SAOPAULO", "cnpjCpf": "52524032000190", "companyName": "Company Name Charlie Brown", "userNickName": "Cupertino"}}
+
 PlugPag.beep({
     frequency: BeepDataConstants.FREQUENCY_LEVEL_1,
     duration: 200,
