@@ -1,9 +1,10 @@
 import {
   type PlugPagBeepData,
   type PlugPagUserDataResult,
-  type PrintLine,
-  type PlugPagPrinterData,
   type PlugPagPrintResult,
+  type PlugPagPrinterDataLines,
+  type PlugPagPrinterDataFile,
+  type PlugPagPrinterDataText,
 } from './types';
 import IPlugPagBaseImpl from './IPlugPagBaseImpl';
 
@@ -34,28 +35,38 @@ export default class PlugPagFallback extends IPlugPagBaseImpl {
     return false;
   }
   printFromText(
-    _text: string,
-    _printerQuality?: number,
-    _steps?: number
-  ): Promise<boolean> {
+    _printerData: PlugPagPrinterDataText
+  ): Promise<PlugPagPrintResult> {
     console.warn('printFromText is not available on this platform');
-    return Promise.resolve(false);
+    const result: PlugPagPrintResult = {
+      result: 1,
+      errorCode: 'RUNTIME_NOT_AVAILABLE',
+      message: 'Print from file is not available on this platform',
+      steps: _printerData.steps ?? 0,
+    };
+    return Promise.resolve(result);
   }
   printFromLines(
-    _printLines: PrintLine[],
-    _printerQuality?: number,
-    _steps?: number
-  ): Promise<boolean> {
+    _printerData: PlugPagPrinterDataLines
+  ): Promise<PlugPagPrintResult> {
     console.warn('printFromLines is not available on this platform');
-    return Promise.resolve(false);
+    const result: PlugPagPrintResult = {
+      result: 1,
+      errorCode: 'RUNTIME_NOT_AVAILABLE',
+      message: 'Print from file is not available on this platform',
+      steps: _printerData.steps ?? 0,
+    };
+    return Promise.resolve(result);
   }
-  printFromFile(printerData: PlugPagPrinterData): Promise<PlugPagPrintResult> {
+  printFromFile(
+    _printerData: PlugPagPrinterDataFile
+  ): Promise<PlugPagPrintResult> {
     console.warn('printFromFile() is not available on this platform');
     const result: PlugPagPrintResult = {
       result: 1,
       errorCode: 'RUNTIME_NOT_AVAILABLE',
       message: 'Print from file is not available on this platform',
-      steps: printerData.steps,
+      steps: _printerData.steps ?? 0,
     };
     return Promise.resolve(result);
   }

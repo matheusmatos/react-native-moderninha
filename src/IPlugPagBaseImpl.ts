@@ -1,7 +1,6 @@
 import {
   type PlugPagBeepData,
   type PlugPagUserDataResult,
-  type PlugPagPrinterData,
   type PlugPagPrintResult,
   type PlugPagAbortResult,
   type PlugPagActivationData,
@@ -39,7 +38,11 @@ import {
 } from './types/IPlugPagTypes';
 import { IPlugPagPropertiesBase } from './types/IPlugPagPropertiesBase';
 import type { IPlugPag } from './types/IPlugPag';
-import type { PrintLine } from './types/IPlugPagTypesCustom';
+import type {
+  PlugPagPrinterDataFile,
+  PlugPagPrinterDataLines,
+  PlugPagPrinterDataText,
+} from './types/IPlugPagTypesCustom';
 
 export default class PlugPagBaseImpl
   extends IPlugPagPropertiesBase
@@ -176,21 +179,19 @@ export default class PlugPagBaseImpl
   justAuthNfcDirectly(_plugPagNFCAuthDirectly: PlugPagNFCAuthDirectly): number {
     throw new Error('Method justAuthNfcDirectly() not implemented.');
   }
-  printFromFile(_printerData: PlugPagPrinterData): Promise<PlugPagPrintResult> {
+  printFromFile(
+    _printerData: PlugPagPrinterDataFile
+  ): Promise<PlugPagPrintResult> {
     throw new Error('Method printFromFile() not implemented.');
   }
   printFromLines(
-    _printLines: PrintLine[],
-    _printerQuality?: number,
-    _steps?: number
-  ): Promise<boolean> {
+    _printerData: PlugPagPrinterDataLines
+  ): Promise<PlugPagPrintResult> {
     throw new Error('Method printFromLines() not implemented.');
   }
   printFromText(
-    _text: string,
-    _printerQuality?: number,
-    _steps?: number
-  ): Promise<boolean> {
+    _printerData: PlugPagPrinterDataText
+  ): Promise<PlugPagPrintResult> {
     throw new Error('Method printFromText() not implemented.');
   }
   readFromNFCCard(_cardData: PlugPagNearFieldCardData): PlugPagNFCResult {

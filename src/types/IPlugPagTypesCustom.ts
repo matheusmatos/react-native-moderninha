@@ -24,3 +24,21 @@ export type PrintLine = {
    */
   content?: string;
 };
+
+export type PlugPagPrinterDataFile = {
+  filePath: string;
+  printerQuality: number;
+  steps: number;
+};
+
+export type PlugPagPrinterDataLines = {
+  lines: PrintLine[];
+  printerQuality?: number;
+  steps?: number;
+};
+
+export type PlugPagPrinterDataText = {
+  text: string;
+  printerQuality?: number;
+  steps?: number;
+};

@@ -1,9 +1,10 @@
 import type {
   PlugPagBeepData,
-  PrintLine,
   PlugPagUserDataResult,
-  PlugPagPrinterData,
   PlugPagPrintResult,
+  PlugPagPrinterDataText,
+  PlugPagPrinterDataLines,
+  PlugPagPrinterDataFile,
 } from './types';
 import Moderninha from './Moderninha';
 import IPlugPagBaseImpl from './IPlugPagBaseImpl';
@@ -26,22 +27,8 @@ export default class PlugPagNative extends IPlugPagBaseImpl {
   hasCapability(capability: number): boolean {
     return Moderninha.hasCapability(capability);
   }
-  printFromText(
-    text: string,
-    printerQuality?: number,
-    steps?: number
-  ): Promise<boolean> {
-    return Moderninha.printFromText(text, printerQuality, steps);
-  }
-  printFromLines(
-    printLines: PrintLine[],
-    printerQuality?: number,
-    steps?: number
-  ): Promise<boolean> {
-    return Moderninha.printFromLines(printLines, printerQuality, steps);
-  }
   async printFromFile(
-    printerData: PlugPagPrinterData
+    printerData: PlugPagPrinterDataFile
   ): Promise<PlugPagPrintResult> {
     return Moderninha.printFromFile(
       printerData.filePath,
@@ -52,5 +39,23 @@ export default class PlugPagNative extends IPlugPagBaseImpl {
       errorCode: 0,
       errorMessage: '',
     }));
+  }
+  async printFromText(
+    printerData: PlugPagPrinterDataText
+  ): Promise<PlugPagPrintResult> {
+    return Moderninha.printFromText(
+      printerData.text,
+      printerData.printerQuality,
+      printerData.steps
+    );
+  }
+  async printFromLines(
+    printerData: PlugPagPrinterDataLines
+  ): Promise<PlugPagPrintResult> {
+    return Moderninha.printFromLines(
+      printerData.lines,
+      printerData.printerQuality,
+      printerData.steps
+    );
   }
 }

@@ -25,7 +25,6 @@ import {
   type PlugPagPreAutoQueryResult,
   type PlugPagPrintActionListener,
   type PlugPagPrintActionResult,
-  type PlugPagPrinterData,
   type PlugPagPrinterListener,
   type PlugPagPrintResult,
   type PlugPagReceiptSMSData,
@@ -37,7 +36,11 @@ import {
   type PlugPagUserDataResult,
   type PlugPagVoidData,
 } from './IPlugPagTypes';
-import { type PrintLine } from './IPlugPagTypesCustom';
+import {
+  type PlugPagPrinterDataFile,
+  type PlugPagPrinterDataLines,
+  type PlugPagPrinterDataText,
+} from './IPlugPagTypesCustom';
 
 export type IPlugPagProperties = {
   /**
@@ -584,29 +587,23 @@ export interface IPlugPag extends IPlugPagProperties {
    * @param printerData Dados de impressão.
    * @returns Resultado da impressão.
    */
-  printFromFile(printerData: PlugPagPrinterData): Promise<PlugPagPrintResult>;
+  printFromFile(
+    printerData: PlugPagPrinterDataFile
+  ): Promise<PlugPagPrintResult>;
   /**
    * Prints a series of lines with different styles (tags) and content.
-   * @param printLines Array of PrintLine objects specifying the lines to print.
-   * @param printerQuality Quality of the printout.
-   * @param steps Number of lines printed after the main content (minimum: PlugPag.MIN_PRINTER_STEPS).
+   * @param printerData Dados de impressão.
    */
   printFromLines(
-    printLines: PrintLine[],
-    printerQuality?: number,
-    steps?: number
-  ): Promise<boolean>;
+    printerData: PlugPagPrinterDataLines
+  ): Promise<PlugPagPrintResult>;
   /**
    * Prints text by converting it to a bitmap.
-   * @param text Text to be rendered and printed.
-   * @param printerQuality Quality of the printout.
-   * @param steps Number of lines printed after the main content (minimum: PlugPag.MIN_PRINTER_STEPS).
+   * @param printerData Dados de impressão.
    */
   printFromText(
-    text: string,
-    printerQuality?: number,
-    steps?: number
-  ): Promise<boolean>;
+    printerData: PlugPagPrinterDataText
+  ): Promise<PlugPagPrintResult>;
   /**
    * Executa uma solicitação de leitura de um cartão NFC.
    * @param cardData Dados do cartão NFC.
