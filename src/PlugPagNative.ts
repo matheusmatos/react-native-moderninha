@@ -1,12 +1,14 @@
 import type {
-  IPlugPag,
   PlugPagBeepData,
   PrintLine,
   PlugPagUserDataResult,
-} from '../types';
-import Moderninha from '../Moderninha';
+  PlugPagPrinterData,
+  PlugPagPrintResult,
+} from './types';
+import Moderninha from './Moderninha';
+import IPlugPagBaseImpl from './IPlugPagBaseImpl';
 
-export default class NativePlugPag implements IPlugPag {
+export default class PlugPagNative extends IPlugPagBaseImpl {
   beep(beepData: PlugPagBeepData): Promise<number> {
     return Moderninha.beep(beepData);
   }
@@ -45,11 +47,15 @@ export default class NativePlugPag implements IPlugPag {
     return Moderninha.printFromLines(printLines, printerQuality, steps);
   }
 
-  printFromFile(
-    filePath: string,
-    printerQuality: number = 4,
-    steps: number = 10 * 12
-  ): Promise<boolean> {
-    return Moderninha.printFromFile(filePath, printerQuality, steps);
+  printFromFile(printerData: PlugPagPrinterData): Promise<PlugPagPrintResult> {
+    return Moderninha.printFromFile(
+      printerData.filePath,
+      printerData.printerQuality,
+      printerData.steps
+    ).then((success: boolean) => ({
+      result: success ? 0 : -1,
+      errorCode: 0,
+      errorMessage: '',
+    }));
   }
 }
