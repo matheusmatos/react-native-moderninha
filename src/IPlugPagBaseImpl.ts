@@ -43,6 +43,7 @@ import type {
   PlugPagPrinterDataLines,
   PlugPagPrinterDataText,
 } from './types/IPlugPagTypesCustom';
+import type { PlugPagException } from './types/IPlugPagErrors';
 
 export default class PlugPagBaseImpl
   extends IPlugPagPropertiesBase
@@ -96,7 +97,7 @@ export default class PlugPagBaseImpl
   }
   async doPayment(
     _paymentData: PlugPagPaymentData
-  ): Promise<PlugPagTransactionResult> {
+  ): Promise<PlugPagTransactionResult | PlugPagException> {
     throw new Error('Method doPayment() not implemented.');
   }
   async doPreAutoCancel(

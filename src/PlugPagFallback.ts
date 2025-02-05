@@ -7,6 +7,7 @@ import {
   type PlugPagPrinterDataText,
   type PlugPagTransactionResult,
   type PlugPagPaymentData,
+  type PlugPagException,
 } from './types';
 import IPlugPagBaseImpl from './IPlugPagBaseImpl';
 
@@ -74,7 +75,7 @@ export default class PlugPagFallback extends IPlugPagBaseImpl {
   }
   doPayment(
     _paymentData: PlugPagPaymentData
-  ): Promise<PlugPagTransactionResult> {
+  ): Promise<PlugPagTransactionResult | PlugPagException> {
     console.warn('doPayment is not available on this platform');
     const result: PlugPagTransactionResult = {
       result: 1,

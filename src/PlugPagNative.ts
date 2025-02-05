@@ -7,6 +7,8 @@ import type {
   PlugPagPrinterDataFile,
   PlugPagPaymentData,
   PlugPagEventListener,
+  PlugPagTransactionResult,
+  PlugPagException,
 } from './types';
 import Moderninha from './Moderninha';
 import IPlugPagBaseImpl from './IPlugPagBaseImpl';
@@ -36,8 +38,15 @@ export default class PlugPagNative extends IPlugPagBaseImpl {
   async setEventListener(listener: PlugPagEventListener) {
     Moderninha.setEventListener(listener);
   }
-  async doPayment(paymentData: PlugPagPaymentData) {
-    return Moderninha.doPayment(paymentData);
+  async doPayment(
+    paymentData: PlugPagPaymentData
+  ): Promise<PlugPagTransactionResult | PlugPagException> {
+    try {
+      const result = await Moderninha.doPayment(paymentData);
+      return Promise.resolve(result);
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
   async printFromFile(
     printerData: PlugPagPrinterDataFile

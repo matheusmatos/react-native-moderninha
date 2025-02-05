@@ -2,7 +2,6 @@ package com.matheusmatos.moderninha
 
 import android.Manifest
 import android.content.pm.PackageManager
-import androidx.annotation.Nullable
 import androidx.core.content.ContextCompat
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPag
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagEventData
@@ -16,7 +15,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
-import com.facebook.react.bridge.WritableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import org.json.JSONObject
@@ -119,24 +117,16 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
       )
       val result = plugPag.doPayment(paymentData = paymentData)
 
-      val errorCode = result.errorCode
-      val message = result.message
-
-      if (errorCode != "0") {
-        promise?.reject(errorCode, message)
-        return@Thread
-      }
-
       val payload = Arguments.createMap()
       result.result?.let { payload.putInt("code", it) }
       payload.putString("message", result.message)
+      payload.putString("errorCode", result.errorCode)
       payload.putString("cardApplication", result.cardApplication)
       payload.putString("bin", result.bin)
       payload.putString("availableBalance", result.availableBalance)
       payload.putString("amount", result.amount)
       payload.putString("cardBrand", result.cardBrand)
       payload.putString("date", result.date)
-      payload.putString("errorCode", result.errorCode)
       payload.putString("extendedHolderName", result.extendedHolderName)
       payload.putString("holder", result.holder)
       payload.putString("hostNsu", result.hostNsu)

@@ -1,3 +1,4 @@
+import type { PlugPagException } from './IPlugPagErrors';
 import {
   type PlugPagAbortResult,
   type PlugPagActivationData,
@@ -436,7 +437,9 @@ export interface IPlugPag extends IPlugPagProperties {
    * @param paymentData Dados de transação.
    * @returns Resultado da transação.
    */
-  doPayment(paymentData: PlugPagPaymentData): Promise<PlugPagTransactionResult>;
+  doPayment(
+    paymentData: PlugPagPaymentData
+  ): Promise<PlugPagTransactionResult | PlugPagException>;
   /**
    * Executa uma solicitação de cancelamento de uma transação pré-autorizada.
    * @param transactionId ID da transação.
