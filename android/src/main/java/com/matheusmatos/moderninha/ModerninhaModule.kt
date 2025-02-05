@@ -116,7 +116,7 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
       val result = plugPag.doPayment(paymentData = paymentData)
 
       if (result.result != 0) {
-        promise.reject(result.errorCode, result.message ?: "Unknown error")
+        promise.reject(result.errorCode ?: "UNKNOWN_ERROR", result.message ?: "Unknown error")
         return@Thread
       }
 
