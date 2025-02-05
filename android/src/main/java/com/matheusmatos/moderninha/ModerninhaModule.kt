@@ -2,8 +2,12 @@ package com.matheusmatos.moderninha
 
 import android.Manifest
 import android.content.pm.PackageManager
+import androidx.annotation.Nullable
 import androidx.core.content.ContextCompat
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPag
+import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagEventData
+import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagEventListener
+import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagPaymentData
 import br.com.uol.pagseguro.plugpagservice.wrapper.data.request.PlugPagBeepData
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
@@ -12,8 +16,11 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.WritableMap
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import org.json.JSONObject
+
 
 @ReactModule(name = ModerninhaModule.TAG)
 @Suppress("unused")
@@ -38,6 +45,16 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
       "TERMINAL_SERIAL_NUMBER" to moderninhaUtils.getTerminalSerialNumber(),
       "TERMINAL_SN" to moderninhaUtils.getTerminalSN()
     )
+  }
+
+  private fun sendEvent(plugPagEventData: PlugPagEventData) {
+    val params = Arguments.createMap()
+    params.putInt("eventCode", plugPagEventData.eventCode)
+    params.putString("message", plugPagEventData.customMessage)
+
+    reactApplicationContext
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+      .emit("onPlugPagEvent", params)
   }
 
   @ReactMethod
@@ -74,6 +91,58 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun isAuthenticated(): Boolean {
     return plugPag.isAuthenticated()
+  }
+
+  @ReactMethod
+  fun doPayment(options: ReadableMap, promise: Promise?) {
+    plugPag.setEventListener(
+      listener = object : PlugPagEventListener {
+        override fun onEvent(data: PlugPagEventData) {
+          sendEvent(data)
+        }
+      }
+    )
+
+//    sendEvent(PlugPagEventData(1, "INICIANDO", "process"))
+
+
+    val paymentThread = Thread {
+      val paymentData = PlugPagPaymentData(
+        type = options.getInt("type"),
+        amount = options.getInt("amount"),
+        installmentType = options.getInt("installmentType"),
+        installments = options.getInt("installments"),
+        userReference = options.getString("userReference"),
+        printReceipt = options.getBoolean("printReceipt"),
+        partialPay = options.getBoolean("partialPay"),
+        isCarne = options.getBoolean("isCarne"),
+      )
+      val result = plugPag.doPayment(paymentData = paymentData)
+
+      val payload = Arguments.createMap()
+      result.result?.let { payload.putInt("code", it) }
+      payload.putString("message", result.message)
+      payload.putString("cardApplication", result.cardApplication)
+      payload.putString("bin", result.bin)
+      payload.putString("availableBalance", result.availableBalance)
+      payload.putString("amount", result.amount)
+      payload.putString("cardBrand", result.cardBrand)
+      payload.putString("date", result.date)
+      payload.putString("errorCode", result.errorCode)
+      payload.putString("extendedHolderName", result.extendedHolderName)
+      payload.putString("holder", result.holder)
+      payload.putString("hostNsu", result.hostNsu)
+      payload.putString("label", result.label)
+      payload.putString("terminalSerialNumber", result.terminalSerialNumber)
+      payload.putString("transactionCode", result.transactionCode)
+      payload.putString("transactionId", result.transactionId)
+      result.paymentType?.let { payload.putInt("paymentType", it) }
+      payload.putString("eventType", "result")
+
+      promise?.resolve(payload)
+    }
+
+    paymentThread.start()
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)

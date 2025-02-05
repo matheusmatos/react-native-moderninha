@@ -77,7 +77,79 @@ export interface PlugPagEffectuatePreAutoData {
   transactionCode?: string;
 }
 
-export interface PlugPagEventData {}
+/**
+ * Código de evento indicando que a ativação foi feita corretamente.
+ */
+export enum PlugPagEventCode {
+  /** Código de evento indicando que o leitor está aguardando o usuário inserir o cartão. */
+  WAITING_CARD = 0,
+  /** Código de evento indicando que o cartão foi inserido. */
+  INSERTED_CARD = 1,
+  /** Código de evento indicando que o leitor está aguardando o usuário digitar a senha. */
+  PIN_REQUESTED = 2,
+  /** Código de evento indicando que a senha foi digitada com sucesso. */
+  PIN_OK = 3,
+  /** Código de evento indicando o fim da transação. */
+  SALE_END = 4,
+  /** Código de evento indicando que o terminal está aguardando autorização da senha digitada para prosseguir com a transação. */
+  AUTHORIZING = 5,
+  /** Código de evento indicando que a senha foi digitada com sucesso. Esse código foi descontinuado e será removido em futuras atualizações. */
+  INSERTED_KEY = 6,
+  /** Código de evento indicando que o terminal está aguardando o usuário remover o cartão. */
+  WAITING_REMOVE_CARD = 7,
+  /** Código de evento indicando que o cartão foi removido do terminal. */
+  REMOVED_CARD = 8,
+  /** Código de evento indicando que foi solicitado o CVV. */
+  CVV_REQUESTED = 9,
+  /** Código de evento indicando que o CVV foi inserido. */
+  CVV_OK = 10,
+  /** Código de evento indicando que foi solicitado o BIN. */
+  CAR_BIN_REQUESTED = 11,
+  /** Código de evento indicando que o BIN foi inserido. */
+  CAR_BIN_OK = 12,
+  /** Código de evento indicando que foi solicitado o holder. */
+  CAR_HOLDER_REQUESTED = 13,
+  /** Código de evento indicando que o holder foi inserido. */
+  CAR_HOLDER_OK = 14,
+  /** Código de evento indicando que a ativação foi feita corretamente. */
+  ACTIVATION_SUCCESS = 15,
+  /** Código de evento indicando que um dígito da senha foi digitado. */
+  DIGIT_PASSWORD = 16,
+  /** Código de evento indicando que a senha foi apagada. */
+  NO_PASSWORD = 17,
+  /** Código de evento indicando que a venda foi autorizada. */
+  SALE_APPROVED = 18,
+  /** Código de evento indicando que a venda não foi autorizada. */
+  SALE_NOT_APPROVED = 19,
+  /** Código de evento indicando que houve um erro de leitura contactless. */
+  CONTACTLESS_ERROR = 23,
+  /** Código de evento indicando que é necessário observar instruções no smartphone durante um pagamento via contactless. */
+  CONTACTLESS_ON_DEVICE = 24,
+  /** Código de evento indicando que é necessário usar pagamento via tarja magnética para a atual transação. */
+  USE_TARJA = 25,
+  /** Código de evento indicando que é necessário usar pagamento via chip para a atual transação. */
+  USE_CHIP = 26,
+  /** Código de evento indicando que está sendo feito o download da carga de tabelas. */
+  DOWNLOADING_TABLES = 27,
+  /** Código de evento indicando que está sendo feito a gravação da carga de tabelas. */
+  RECORDING_TABLES = 28,
+  /** Código de evento indicando que a transação foi efetuada com sucesso. */
+  SUCCESS = 29,
+  /** Código de evento indicando que estão sendo resolvidas pendências. */
+  SOLVE_PENDINGS = 30,
+  /** Código de evento indicando mensagem customizada pela PlugPag. */
+  CUSTOM_MESSAGE = -1,
+  /** Código padrão de evento. Utilizado quando nenhum evento foi enviado. */
+  DEFAULT = -1,
+  /** Código de erro durante a execução do evento. */
+  ON_EVENT_ERROR = -1,
+}
+
+export interface PlugPagEventData {
+  eventCode: PlugPagEventCode;
+  message?: string;
+  errorCode?: string;
+}
 
 /**
  * Contains methods called when there are new payment, refund, deactivation or activation events.
