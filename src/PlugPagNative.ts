@@ -45,7 +45,7 @@ export default class PlugPagNative extends IPlugPagBaseImpl {
       const result = await Moderninha.doPayment(paymentData);
       return Promise.resolve(result);
     } catch (err) {
-      return Promise.reject(err);
+      return Promise.reject(err as PlugPagException);
     }
   }
   async printFromFile(

@@ -92,7 +92,7 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
   }
 
   @ReactMethod
-  fun doPayment(options: ReadableMap, promise: Promise?) {
+  fun doPayment(options: ReadableMap, promise: Promise) {
     plugPag.setEventListener(
       listener = object : PlugPagEventListener {
         override fun onEvent(data: PlugPagEventData) {
@@ -100,9 +100,6 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
         }
       }
     )
-
-//    sendEvent(PlugPagEventData(1, "INICIANDO", "process"))
-
 
     val paymentThread = Thread {
       val paymentData = PlugPagPaymentData(
@@ -115,29 +112,36 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
         partialPay = options.getBoolean("partialPay"),
         isCarne = options.getBoolean("isCarne"),
       )
+
       val result = plugPag.doPayment(paymentData = paymentData)
 
-      val payload = Arguments.createMap()
-      result.result?.let { payload.putInt("code", it) }
-      payload.putString("message", result.message)
-      payload.putString("errorCode", result.errorCode)
-      payload.putString("cardApplication", result.cardApplication)
-      payload.putString("bin", result.bin)
-      payload.putString("availableBalance", result.availableBalance)
-      payload.putString("amount", result.amount)
-      payload.putString("cardBrand", result.cardBrand)
-      payload.putString("date", result.date)
-      payload.putString("extendedHolderName", result.extendedHolderName)
-      payload.putString("holder", result.holder)
-      payload.putString("hostNsu", result.hostNsu)
-      payload.putString("label", result.label)
-      payload.putString("terminalSerialNumber", result.terminalSerialNumber)
-      payload.putString("transactionCode", result.transactionCode)
-      payload.putString("transactionId", result.transactionId)
-      result.paymentType?.let { payload.putInt("paymentType", it) }
-      payload.putString("eventType", "result")
+      if (result.result != 0) {
+        promise.reject(result.errorCode, result.message ?: "Unknown error")
+        return@Thread
+      }
 
-      promise?.resolve(payload)
+      val payload = Arguments.createMap().apply {
+        putInt("code", result.result!!)
+        putString("message", result.message)
+        putString("errorCode", result.errorCode)
+        putString("cardApplication", result.cardApplication)
+        putString("bin", result.bin)
+        putString("availableBalance", result.availableBalance)
+        putString("amount", result.amount)
+        putString("cardBrand", result.cardBrand)
+        putString("date", result.date)
+        putString("extendedHolderName", result.extendedHolderName)
+        putString("holder", result.holder)
+        putString("hostNsu", result.hostNsu)
+        putString("label", result.label)
+        putString("terminalSerialNumber", result.terminalSerialNumber)
+        putString("transactionCode", result.transactionCode)
+        putString("transactionId", result.transactionId)
+        result.paymentType?.let { putInt("paymentType", it) }
+        putString("eventType", "result")
+      }
+
+      promise.resolve(payload)
     }
 
     paymentThread.start()
