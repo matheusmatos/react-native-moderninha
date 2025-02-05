@@ -21,8 +21,8 @@ export default class PlugPagFallback extends IPlugPagBaseImpl {
   isModerninha(): boolean {
     return false;
   }
-  getUserData(): PlugPagUserDataResult {
-    return {
+  getUserData(): Promise<PlugPagUserDataResult> {
+    return Promise.resolve({
       address: 'AVENIDA BRIGADEIRO FARIA LIMA 1232',
       addressComplement: '4 ANDAR',
       addressState: 'SP',
@@ -30,7 +30,7 @@ export default class PlugPagFallback extends IPlugPagBaseImpl {
       cnpjCpf: '52524032000190',
       companyName: 'Company Name Charlie Brown',
       userNickName: 'Cupertino',
-    };
+    });
   }
   hasCapability(_capability: number): boolean {
     console.warn('hasCapability is not available on this platform');

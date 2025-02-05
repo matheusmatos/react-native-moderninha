@@ -138,7 +138,7 @@ export default class PlugPagBaseImpl
   getSubAcquirerData(): PlugPagSubAcquirerResult | null {
     throw new Error('Method getSubAcquirerData() not implemented.');
   }
-  getUserData(): PlugPagUserDataResult {
+  getUserData(): Promise<PlugPagUserDataResult> {
     throw new Error('Method getUserData() not implemented.');
   }
   hasCapability(_capability: number): boolean {

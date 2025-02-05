@@ -21,10 +21,14 @@ export default class PlugPagNative extends IPlugPagBaseImpl {
   isModerninha(): boolean {
     return false;
   }
-  getUserData(): PlugPagUserDataResult {
-    const userDataJson = Moderninha.getUserData();
-    const userData: PlugPagUserDataResult = JSON.parse(userDataJson);
-    return userData;
+  getUserData(): Promise<PlugPagUserDataResult> {
+    try {
+      const userDataJson = Moderninha.getUserData();
+      const userData: PlugPagUserDataResult = JSON.parse(userDataJson);
+      return Promise.resolve(userData);
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
   hasCapability(capability: number): boolean {
     return Moderninha.hasCapability(capability);

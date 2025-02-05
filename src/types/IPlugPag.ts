@@ -515,7 +515,7 @@ export interface IPlugPag extends IPlugPagProperties {
    * Executa uma solicitação de consulta de dados do usuário do terminal.
    * @returns Resultado da consulta de dados do usuário do terminal.
    */
-  getUserData(): PlugPagUserDataResult;
+  getUserData(): Promise<PlugPagUserDataResult>;
   /**
    * Verifica se o terminal tem uma funcionalidade específica.
    * @param capability Funcionalidade a ser verificada.

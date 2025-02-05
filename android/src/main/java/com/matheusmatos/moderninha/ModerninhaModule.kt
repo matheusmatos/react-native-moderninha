@@ -119,6 +119,14 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
       )
       val result = plugPag.doPayment(paymentData = paymentData)
 
+      val errorCode = result.errorCode
+      val message = result.message
+
+      if (errorCode != "0") {
+        promise?.reject(errorCode, message)
+        return@Thread
+      }
+
       val payload = Arguments.createMap()
       result.result?.let { payload.putInt("code", it) }
       payload.putString("message", result.message)
