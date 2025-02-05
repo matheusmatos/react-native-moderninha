@@ -153,7 +153,7 @@ export default class PlugPagBaseImpl
   }
   initializeAndActivatePinpad(
     _activationData: PlugPagActivationData
-  ): PlugPagInitializationResult {
+  ): Promise<PlugPagInitializationResult> {
     throw new Error('Method initializeAndActivatePinpad() not implemented.');
   }
   initializeSubAcquirer(

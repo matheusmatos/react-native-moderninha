@@ -544,7 +544,7 @@ export interface IPlugPag extends IPlugPagProperties {
    */
   initializeAndActivatePinpad(
     activationData: PlugPagActivationData
-  ): PlugPagInitializationResult;
+  ): Promise<PlugPagInitializationResult>;
   /**
    * Executa a inicialização do perfil de sub adquirência do terminal.
    * @param data Dados de inicialização do perfil de sub adquirência.

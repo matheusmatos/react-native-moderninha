@@ -9,6 +9,8 @@ import type {
   PlugPagEventListener,
   PlugPagTransactionResult,
   PlugPagException,
+  PlugPagActivationData,
+  PlugPagInitializationResult,
 } from './types';
 import Moderninha from './Moderninha';
 import IPlugPagBaseImpl from './IPlugPagBaseImpl';
@@ -22,6 +24,26 @@ export default class PlugPagNative extends IPlugPagBaseImpl {
   }
   isModerninha(): boolean {
     return false;
+  }
+  async initializeAndActivatePinpad(
+    activationData: PlugPagActivationData
+  ): Promise<PlugPagInitializationResult> {
+    try {
+      const result = await Moderninha.initializeAndActivatePinpad(
+        activationData.activationCode
+      );
+      return {
+        result: result ? 0 : -1,
+        errorCode: '0',
+        errorMessage: '',
+      };
+    } catch (err) {
+      return {
+        result: -1,
+        errorCode: '1',
+        errorMessage: String(err),
+      };
+    }
   }
   async getUserData(): Promise<PlugPagUserDataResult> {
     try {

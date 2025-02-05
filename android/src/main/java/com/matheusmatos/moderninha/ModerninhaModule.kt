@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPag
+import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagActivationData
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagEventData
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagEventListener
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagPaymentData
@@ -84,6 +85,18 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun hasCapability(capability: Int): Boolean {
     return plugPag.hasCapability(capability)
+  }
+
+  @ReactMethod
+  fun initializeAndActivatePinpad(activationCode: String, promise: Promise) {
+    val data = PlugPagActivationData(activationCode = activationCode)
+    val plugPagInitializationResult = plugPag.initializeAndActivatePinpad(activationData = data)
+
+    if (plugPagInitializationResult.result == PlugPag.RET_OK) {
+      promise.resolve(0)
+    } else {
+      promise.reject(plugPagInitializationResult.errorCode, plugPagInitializationResult.errorMessage)
+    }
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
