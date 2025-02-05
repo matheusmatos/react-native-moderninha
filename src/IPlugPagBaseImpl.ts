@@ -89,23 +89,25 @@ export default class PlugPagBaseImpl
   detectNfcRemoveDirectly(_detectRemove: PlugPagNFCDetectRemoveCard): number {
     throw new Error('Method detectNfcRemoveDirectly() not implemented.');
   }
-  doEffectuatePreAuto(
+  async doEffectuatePreAuto(
     _effectuatePreAutoData: PlugPagEffectuatePreAutoData
-  ): PlugPagTransactionResult {
+  ): Promise<PlugPagTransactionResult> {
     throw new Error('Method doEffectuatePreAuto() not implemented.');
   }
-  doPayment(_paymentData: PlugPagPaymentData): PlugPagTransactionResult {
+  async doPayment(
+    _paymentData: PlugPagPaymentData
+  ): Promise<PlugPagTransactionResult> {
     throw new Error('Method doPayment() not implemented.');
   }
-  doPreAutoCancel(
+  async doPreAutoCancel(
     _transactionId: string,
     _transactionCode: string
-  ): PlugPagTransactionResult {
+  ): Promise<PlugPagTransactionResult> {
     throw new Error('Method doPreAutoCancel() not implemented.');
   }
-  doPreAutoCreate(
+  async doPreAutoCreate(
     _plugPagData: PlugPagPreAutoData | PlugPagPreAutoKeyingData
-  ): PlugPagTransactionResult {
+  ): Promise<PlugPagTransactionResult> {
     throw new Error('Method doPreAutoCreate() not implemented.');
   }
   doPrintAction(_action: number, _phoneNumber?: string): void {

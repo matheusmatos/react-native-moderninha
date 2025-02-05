@@ -430,13 +430,13 @@ export interface IPlugPag extends IPlugPagProperties {
    */
   doEffectuatePreAuto(
     effectuatePreAutoData: PlugPagEffectuatePreAutoData
-  ): PlugPagTransactionResult;
+  ): Promise<PlugPagTransactionResult>;
   /**
    * Executa uma solicitação de transação.
    * @param paymentData Dados de transação.
    * @returns Resultado da transação.
    */
-  doPayment(paymentData: PlugPagPaymentData): PlugPagTransactionResult;
+  doPayment(paymentData: PlugPagPaymentData): Promise<PlugPagTransactionResult>;
   /**
    * Executa uma solicitação de cancelamento de uma transação pré-autorizada.
    * @param transactionId ID da transação.
@@ -446,7 +446,7 @@ export interface IPlugPag extends IPlugPagProperties {
   doPreAutoCancel(
     transactionId: string,
     transactionCode: string
-  ): PlugPagTransactionResult;
+  ): Promise<PlugPagTransactionResult>;
   /**
    * Executa uma solicitação de criação de transação pré-autorizada.
    * @param plugPagPreAutoData Dados de transação pré-autorizada.
@@ -454,7 +454,7 @@ export interface IPlugPag extends IPlugPagProperties {
    */
   doPreAutoCreate(
     plugPagPreAutoData: PlugPagPreAutoData
-  ): PlugPagTransactionResult;
+  ): Promise<PlugPagTransactionResult>;
   /**
    * Executa uma solicitação de criação de transação pré-autorizada digitada.
    * @param plugPagPreAutoKeyingData Dados de transação pré-autorizada digitada.
@@ -462,7 +462,7 @@ export interface IPlugPag extends IPlugPagProperties {
    */
   doPreAutoCreate(
     plugPagPreAutoKeyingData: PlugPagPreAutoKeyingData
-  ): PlugPagTransactionResult;
+  ): Promise<PlugPagTransactionResult>;
   /**
    * Ação a ser executada durante uma impressão.
    * @param action Ação a ser executada.

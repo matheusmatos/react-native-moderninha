@@ -5,6 +5,8 @@ import {
   type PlugPagPrinterDataLines,
   type PlugPagPrinterDataFile,
   type PlugPagPrinterDataText,
+  type PlugPagTransactionResult,
+  type PlugPagPaymentData,
 } from './types';
 import IPlugPagBaseImpl from './IPlugPagBaseImpl';
 
@@ -67,6 +69,17 @@ export default class PlugPagFallback extends IPlugPagBaseImpl {
       errorCode: 'RUNTIME_NOT_AVAILABLE',
       message: 'Print from file is not available on this platform',
       steps: _printerData.steps ?? 0,
+    };
+    return Promise.resolve(result);
+  }
+  doPayment(
+    _paymentData: PlugPagPaymentData
+  ): Promise<PlugPagTransactionResult> {
+    console.warn('doPayment is not available on this platform');
+    const result: PlugPagTransactionResult = {
+      result: 1,
+      errorCode: 'RUNTIME_NOT_AVAILABLE',
+      userRegistered: 0,
     };
     return Promise.resolve(result);
   }

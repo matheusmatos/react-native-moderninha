@@ -5,6 +5,8 @@ import type {
   PlugPagPrinterDataText,
   PlugPagPrinterDataLines,
   PlugPagPrinterDataFile,
+  PlugPagPaymentData,
+  PlugPagEventListener,
 } from './types';
 import Moderninha from './Moderninha';
 import IPlugPagBaseImpl from './IPlugPagBaseImpl';
@@ -26,6 +28,12 @@ export default class PlugPagNative extends IPlugPagBaseImpl {
   }
   hasCapability(capability: number): boolean {
     return Moderninha.hasCapability(capability);
+  }
+  async setEventListener(listener: PlugPagEventListener) {
+    Moderninha.setEventListener(listener);
+  }
+  async doPayment(paymentData: PlugPagPaymentData) {
+    return Moderninha.doPayment(paymentData);
   }
   async printFromFile(
     printerData: PlugPagPrinterDataFile
