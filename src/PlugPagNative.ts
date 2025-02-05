@@ -28,22 +28,9 @@ export default class PlugPagNative extends IPlugPagBaseImpl {
   async initializeAndActivatePinpad(
     activationData: PlugPagActivationData
   ): Promise<PlugPagInitializationResult> {
-    try {
-      const result = await Moderninha.initializeAndActivatePinpad(
-        activationData.activationCode
-      );
-      return {
-        result: result ? 0 : -1,
-        errorCode: '0',
-        errorMessage: '',
-      };
-    } catch (err) {
-      return {
-        result: -1,
-        errorCode: '1',
-        errorMessage: String(err),
-      };
-    }
+    return Moderninha.initializeAndActivatePinpad(
+      activationData.activationCode
+    );
   }
   async getUserData(): Promise<PlugPagUserDataResult> {
     try {
