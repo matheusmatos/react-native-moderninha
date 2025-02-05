@@ -143,7 +143,7 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
     paymentThread.start()
   }
 
-  fun getUserData(promise: Promise?) {
+  fun getUserData(promise: Promise) {
     try {
       val userData = plugPag.getUserData()
       val map = Arguments.createMap().apply {
@@ -161,7 +161,7 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
       for (entry in map.entryIterator) {
         json.put(entry.key, entry.value)
       }
-      promise?.resolve(json.toString())
+      promise.resolve(json.toString())
     } catch (e: Exception) {
       promise.reject(e);
     }
