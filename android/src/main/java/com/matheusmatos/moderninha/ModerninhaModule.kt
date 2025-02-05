@@ -143,6 +143,7 @@ class ModerninhaModule(reactContext: ReactApplicationContext) : ReactContextBase
     paymentThread.start()
   }
 
+  @ReactMethod
   fun getUserData(promise: Promise) {
     try {
       val userData = plugPag.getUserData()
